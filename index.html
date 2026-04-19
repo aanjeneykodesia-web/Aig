@@ -3,360 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IndiaMart Data Extractor</title>
+    <title>Website Crawler & Extractor</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); }
-        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.12); }
+        .gradient-bg { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%); }
+        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); }
+        .progress-bar { background: linear-gradient(90deg, #10b981, #34d399); }
     </style>
 </head>
-<body class="gradient-bg min-h-screen py-12 px-4">
-    <div class="max-w-5xl mx-auto">
+<body class="gradient-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
         <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-3 bg-white/20 backdrop-blur-lg px-8 py-4 rounded-full mb-8 shadow-2xl">
-                <i class="fas fa-search-dollar text-3xl text-yellow-400"></i>
-                <h1 class="text-4xl md:text-5xl font-bold text-white">IndiaMart Extractor</h1>
+            <div class="inline-flex items-center gap-4 bg-white/10 backdrop-blur-xl px-10 py-6 rounded-3xl mb-8 shadow-2xl border border-white/20">
+                <i class="fas fa-spider text-4xl text-emerald-400"></i>
+                <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                    Website Crawler
+                </h1>
             </div>
-            <p class="text-xl text-white/90 max-w-3xl mx-auto">
-                Extract supplier contacts from IndiaMart search results ✅ Phones, Emails, WhatsApp
+            <p class="text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+                Enter URL → Crawls ALL linked pages → Extracts phones, emails, WhatsApp automatically
             </p>
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-10">
-            <!-- URL Input -->
-            <div class="glass rounded-3xl p-10 border border-white/20 shadow-2xl">
-                <div class="flex items-center gap-4 mb-10">
-                    <i class="fas fa-link text-3xl text-emerald-400"></i>
-                    <h2 class="text-3xl font-bold text-white">IndiaMart URL</h2>
-                </div>
-                
-                <div class="space-y-6">
+        <!-- Controls -->
+        <div class="glass rounded-3xl p-8 lg:p-12 mb-12 shadow-2xl">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Starting URL -->
+                <div>
+                    <label class="block text-white/90 font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-link text-emerald-400"></i> Starting URL
+                    </label>
                     <div class="relative">
-                        <input id="urlInput" type="url" 
-                               placeholder="https://m.indiamart.com/isearch.php?s=rice..."
-                               class="w-full p-6 pl-14 pr-24 rounded-3xl bg-white/10 text-white placeholder-white/70 
-                                      border-2 border-white/20 focus:border-emerald-400 focus:outline-none 
-                                      focus:ring-4 ring-emerald-400/30 text-lg font-mono tracking-wide"
-                               value="https://m.indiamart.com/isearch.php?s=rice&cq_src=all-india_pos_11&crs=cs-all&no_sugg=1&tags=res:RC5|ktp:N0|mtp:SP|wc:1|lcf:-1|qr_nm:gd|cs:16136|com-cf:nl|ptrs:na|mc:105901|cat:171|qry_typ:P|lang:en|qrd:260417|mrd:260401|prdt:260419|msf:ls|pfen:1|gli:U1G1I1|gc:lucknow|ic:Lucknow|guc:Lucknow|emt:10">
-                        <i class="fas fa-globe absolute left-5 top-1/2 -translate-y-1/2 text-emerald-400 text-2xl"></i>
-                        <button onclick="extractIndiaMart()" 
-                                class="absolute right-3 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-teal-600 
-                                       hover:from-emerald-600 hover:to-teal-700 text-white px-8 py-4 rounded-2xl 
-                                       font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300
-                                       flex items-center gap-2">
-                            <i class="fas fa-bolt"></i> Extract Contacts
-                        </button>
+                        <input id="startUrl" type="url" placeholder="https://example.com" 
+                               class="w-full p-5 pl-12 pr-32 rounded-2xl bg-white/5 text-white placeholder-white/60 
+                                      border border-white/20 focus:border-emerald-400 focus:outline-none 
+                                      focus:ring-4 ring-emerald-400/30 text-lg font-mono"
+                               value="https://m.indiamart.com/isearch.php?s=rice">
+                        <i class="fas fa-globe absolute left-4 top-1/2 -translate-y-1/2 text-emerald-400"></i>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-4 text-center p-6 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 
-                                border border-yellow-400/40 rounded-3xl">
-                        <div class="text-yellow-100">
-                            <div class="text-2xl font-bold text-yellow-400">📱 Phones</div>
-                            <div class="text-sm">+91 numbers</div>
-                        </div>
-                        <div class="text-yellow-100">
-                            <div class="text-2xl font-bold text-yellow-400">✉️ WhatsApp</div>
-                            <div class="text-sm">WA links</div>
-                        </div>
-                    </div>
+                </div>
+
+                <!-- Crawl Depth -->
+                <div>
+                    <label class="block text-white/90 font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-layer-group text-blue-400"></i> Max Depth
+                    </label>
+                    <select id="maxDepth" class="w-full p-5 rounded-2xl bg-white/5 text-white border border-white/20 focus:border-blue-400 focus:ring-4 ring-blue-400/30">
+                        <option value="1">1 page (Fast)</option>
+                        <option value="2" selected>2 pages (Recommended)</option>
+                        <option value="3">3 pages (Deep)</option>
+                        <option value="5">5 pages (Full)</option>
+                    </select>
+                </div>
+
+                <!-- Crawl Speed -->
+                <div>
+                    <label class="block text-white/90 font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-tachometer-alt text-purple-400"></i> Speed
+                    </label>
+                    <select id="speed" class="w-full p-5 rounded-2xl bg-white/5 text-white border border-white/20 focus:border-purple-400 focus:ring-4 ring-purple-400/30">
+                        <option value="1000">Slow (Safe)</option>
+                        <option value="500" selected>Medium</option>
+                        <option value="200">Fast</option>
+                        <option value="100">Turbo</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Results -->
-            <div class="glass rounded-3xl p-10 border border-white/20 shadow-2xl">
-                <div class="flex items-center justify-between mb-10 pb-6 border-b border-white/20">
-                    <div class="flex items-center gap-4">
-                        <i class="fas fa-phone text-3xl text-emerald-400"></i>
-                        <h2 class="text-3xl font-bold text-white">📞 Contacts Found</h2>
+            <div class="flex flex-col sm:flex-row gap-4 mt-10">
+                <button onclick="startCrawl()" 
+                        class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 
+                               text-white py-6 px-8 rounded-3xl font-bold text-xl shadow-2xl hover:shadow-3xl 
+                               transition-all duration-300 flex items-center justify-center gap-4 text-lg">
+                    <i class="fas fa-play-circle text-2xl"></i>
+                    <span id="crawlBtnText">🚀 Start Crawling</span>
+                </button>
+                <button onclick="stopCrawl()" 
+                        class="px-8 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 
+                               text-white py-6 rounded-3xl font-bold shadow-xl hover:shadow-2xl transition-all
+                               flex items-center justify-center gap-3 hidden" id="stopBtn">
+                    <i class="fas fa-stop-circle text-xl"></i> Stop
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress & Stats -->
+        <div class="glass rounded-3xl p-8 mb-12 shadow-2xl hidden" id="progressSection">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-emerald-400" id="pagesCrawled">0</div>
+                    <div class="text-white/70 text-sm uppercase tracking-wide">Pages Crawled</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-400" id="totalPhones">0</div>
+                    <div class="text-white/70 text-sm uppercase tracking-wide">Phones Found</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-400" id="totalWhatsApp">0</div>
+                    <div class="text-white/70 text-sm uppercase tracking-wide">WhatsApp</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-400" id="totalEmails">0</div>
+                    <div class="text-white/70 text-sm uppercase tracking-wide">Emails</div>
+                </div>
+            </div>
+            
+            <div class="mb-8">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="flex-1 bg-white/5 rounded-full h-3"></div>
+                    <div class="text-white font-mono text-sm min-w-[100px]" id="progressText">0%</div>
+                </div>
+                <div class="w-full bg-white/5 rounded-full h-4 overflow-hidden">
+                    <div class="progress-bar h-full rounded-full transition-all duration-300" id="progressBar" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="currentPageSection">
+                <div>
+                    <div class="text-white/90 font-semibold mb-2 flex items-center gap-2">
+                        <i class="fas fa-eye text-blue-400"></i> Current Page
                     </div>
-                    <div class="flex gap-3 p-3 bg-white/10 backdrop-blur rounded-2xl">
-                        <button onclick="copyAllContacts()" class="p-4 hover:bg-white/20 rounded-xl transition-all flex items-center gap-2">
-                            <i class="fas fa-copy"></i> Copy All
-                        </button>
-                        <button onclick="downloadContacts()" class="p-4 hover:bg-white/20 rounded-xl transition-all flex items-center gap-2">
-                            <i class="fas fa-download"></i> Download
-                        </button>
+                    <div class="text-white/70 text-sm font-mono truncate bg-white/5 p-3 rounded-xl" id="currentPage">None</div>
+                </div>
+                <div>
+                    <div class="text-white/90 font-semibold mb-2 flex items-center gap-2">
+                        <i class="fas fa-list text-purple-400"></i> Queue
                     </div>
+                    <div class="text-white/70 text-sm font-mono bg-white/5 p-3 rounded-xl" id="queueCount">0</div>
                 </div>
-                
-                <div id="loading" class="hidden flex flex-col items-center justify-center py-20 text-white/70">
-                    <div class="w-20 h-20 border-4 border-white/20 border-t-emerald-400 rounded-full animate-spin mb-6"></div>
-                    <div class="text-xl font-semibold">Fetching IndiaMart page...</div>
-                    <div class="text-sm mt-2">This takes 3-5 seconds</div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="glass rounded-3xl p-8 lg:p-12 shadow-2xl" id="resultsSection">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold text-white flex items-center gap-4">
+                    <i class="fas fa-database text-emerald-400"></i> Extracted Data
+                </h2>
+                <div class="flex gap-3">
+                    <button onclick="copyAllData()" class="p-4 bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-400/50 text-emerald-100 rounded-2xl transition-all flex items-center gap-2">
+                        <i class="fas fa-copy"></i> Copy All
+                    </button>
+                    <button onclick="downloadAllData()" class="p-4 bg-purple-500/20 hover:bg-purple-500/40 border border-purple-400/50 text-purple-100 rounded-2xl transition-all flex items-center gap-2">
+                        <i class="fas fa-download"></i> Download CSV
+                    </button>
+                    <button onclick="clearAll()" class="p-4 bg-gray-500/20 hover:bg-gray-500/40 border border-gray-400/50 text-gray-100 rounded-2xl transition-all flex items-center gap-2">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
                 </div>
-                
-                <div id="results" class="space-y-6 hidden">
-                    <!-- Results will appear here -->
-                </div>
-                
-                <div id="emptyState" class="text-center py-20 text-white/50">
-                    <i class="fas fa-inbox text-6xl mb-8 opacity-50"></i>
-                    <div class="text-2xl font-semibold mb-4">Enter IndiaMart URL above</div>
-                    <div class="text-lg">Extracts phones, WhatsApp, emails from search results</div>
+            </div>
+            
+            <div id="resultsContent" class="space-y-6">
+                <div class="text-center py-20 text-white/50">
+                    <i class="fas fa-play text-6xl mb-8 opacity-30"></i>
+                    <div class="text-2xl font-semibold mb-4">Ready to crawl</div>
+                    <div class="text-lg">Click "Start Crawling" to begin</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-8 py-4 rounded-2xl shadow-2xl 
-                         hidden flex items-center gap-3 font-semibold text-lg z-50 backdrop-blur-lg border border-emerald-400">
-        <i class="fas fa-check-circle"></i> <span id="toastText">Ready!</span>
-    </div>
-
     <script>
-        // Multiple CORS proxies for reliability
-        const PROXIES = [
+        // Global state
+        let isCrawling = false;
+        let crawlQueue = [];
+        let visitedPages = new Set();
+        let allData = { phones: new Set(), whatsapp: new Set(), emails: new Set() };
+        let currentDepth = 0;
+
+        // Multiple CORS proxies
+        const proxies = [
             'https://api.allorigins.win/raw?url=',
             'https://corsproxy.io/?',
             'https://thingproxy.freeboard.io/fetch/'
         ];
-        
-        // IndiaMart specific patterns
-        const indiaMartPatterns = {
-            phones: [
-                /(\+91|91|0)?[6-9]\d{9}/g,
-                /[\s\-](\d{10})[\s\-]/g,
-                /(\d{4,5}[-]\d{6})/g
-            ],
-            whatsapp: [
-                /(?:whatsapp|wa|chat)\.?(?:com)?\/(?:send|message)?\/?\??phone?=?(?:\+91)?(?:91)?([6-9]\d{9})/gi,
-                /wa\.me\/([6-9]\d{9})/gi,
-                /whatsapp:([6-9]\d{9})/gi
-            ],
-            emails: /(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b)/gi,
-            suppliers: /(?:Supplier|Manufacturer|Exporter|Wholesaler|Trader)[:\s]+([A-Za-z\s&.,]+)/gi
-        };
 
-        async function extractIndiaMart() {
-            const url = document.getElementById('urlInput').value.trim();
-            if (!url.includes('indiamart.com')) {
-                showToast('Enter valid IndiaMart URL', 'error');
-                return;
-            }
+        async function startCrawl() {
+            const startUrl = document.getElementById('startUrl').value.trim();
+            if (!startUrl) return showToast('Enter starting URL', 'error');
 
-            showLoading();
-            
-            let html = null;
-            for (const proxy of PROXIES) {
+            isCrawling = true;
+            document.getElementById('crawlBtnText').innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Crawling...';
+            document.getElementById('stopBtn').classList.remove('hidden');
+            document.getElementById('progressSection').classList.remove('hidden');
+
+            // Reset state
+            crawlQueue = [startUrl];
+            visitedPages.clear();
+            allData = { phones: new Set(), whatsapp: new Set(), emails: new Set() };
+            currentDepth = 0;
+
+            await crawlWebsite();
+        }
+
+        async function crawlWebsite() {
+            const maxDepth = parseInt(document.getElementById('maxDepth').value);
+            const delay = parseInt(document.getElementById('speed').value);
+
+            while (crawlQueue.length > 0 && isCrawling && currentDepth <= maxDepth) {
+                const url = crawlQueue.shift();
+                
+                if (visitedPages.has(url)) continue;
+                visitedPages.add(url);
+
+                updateProgress();
+                
                 try {
-                    const response = await fetch(proxy + encodeURIComponent(url), {
-                        headers: { 'User-Agent': 'Mozilla/5.0' }
-                    });
+                    await processPage(url);
+                    
+                    // Add new links (same domain, next depth)
+                    if (currentDepth < maxDepth) {
+                        const newLinks = await getPageLinks(url);
+                        crawlQueue.push(...newLinks.slice(0, 10)); // Limit per page
+                    }
+                    
+                    currentDepth++;
+                } catch (e) {
+                    console.log(`Failed to process ${url}:`, e);
+                }
+                
+                await new Promise(r => setTimeout(r, delay));
+            }
+            
+            if (isCrawling) {
+                finalizeCrawl();
+            }
+        }
+
+        async function processPage(url) {
+            for (const proxy of proxies) {
+                try {
+                    const response = await fetch(proxy + encodeURIComponent(url));
                     if (response.ok) {
-                        html = await response.text();
-                        break;
+                        const html = await response.text();
+                        extractDataFromPage(html, url);
+                        updateCurrentPage(url);
+                        return;
                     }
                 } catch (e) {
                     continue;
                 }
             }
-            
-            if (!html) {
-                showError('Could not fetch page. Try desktop version URL.');
-                return;
-            }
-
-            const results = extractIndiaMartData(html);
-            displayResults(results);
-            showToast(`Found ${results.phones.length} phones, ${results.whatsapp.length} WhatsApp!`, 'success');
         }
 
-        function extractIndiaMartData(html) {
+        function extractDataFromPage(html, url) {
             const text = html
-                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+                .replace(/<script\b[^<]*(?:<\/script>|$)/gi, '')
+                .replace(/<style\b[^<]*(?:<\/style>|$)/gi, '')
                 .replace(/<[^>]+>/g, ' ')
-                .replace(/&nbsp;|&#160;/g, ' ')
                 .replace(/\s+/g, ' ')
                 .trim();
 
-            const results = { phones: [], whatsapp: [], emails: [], suppliers: [] };
-
-            // Extract phones (multiple patterns)
-            indiaMartPatterns.phones.forEach(pattern => {
-                text.match(pattern)?.forEach(phone => {
-                    const cleanPhone = phone.replace(/[^\d]/g, '');
-                    if (cleanPhone.length === 10 && /^[6-9]/.test(cleanPhone)) {
-                        results.phones.push('+' + 91 + cleanPhone);
-                    }
-                });
+            // Extract phones (IndiaMart optimized)
+            const phoneRegex = /(\+91|91|0)?[6-9]\d{9}|\d{10}/g;
+            text.match(phoneRegex)?.forEach(phone => {
+                const clean = phone.replace(/[^\d]/g, '');
+                if (clean.length === 10 && /^[6-9]/.test(clean)) {
+                    allData.phones.add('+' + 91 + clean);
+                }
             });
 
             // WhatsApp
-            indiaMartPatterns.whatsapp.forEach(pattern => {
-                text.match(pattern)?.forEach(match => {
-                    const num = match.match(/\d{10}/)?.[0];
-                    if (num) results.whatsapp.push('https://wa.me/91' + num);
-                });
+            const waRegex = /(whatsapp|wa|chat)\S*(?:\/|:)(\+91|91)?([6-9]\d{9})/gi;
+            text.match(waRegex)?.forEach(match => {
+                const num = match.match(/\d{10}/)?.[0];
+                if (num) allData.whatsapp.add('https://wa.me/91' + num);
             });
 
             // Emails
-            results.emails = [...new Set(text.match(indiaMartPatterns.emails) || [])];
-
-            // Suppliers
-            results.suppliers = [...new Set(text.match(indiaMartPatterns.suppliers)?.map(m => m.replace(/Supplier[:\s]+/i, '').trim()) || [])];
-
-            // Remove duplicates
-            results.phones = [...new Set(results.phones)];
-            results.whatsapp = [...new Set(results.whatsapp)];
-
-            return results;
+            const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+            text.match(emailRegex)?.forEach(email => allData.emails.add(email));
         }
 
-        function displayResults(data) {
-            let html = '';
-            
-            if (data.phones.length || data.whatsapp.length) {
-                // Phones
-                if (data.phones.length) {
-                    html += `
-                        <div class="p-6 rounded-3xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 
-                                    border-l-4 border-emerald-400 hover:shadow-2xl transition-all">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <i class="fas fa-phone text-2xl text-emerald-400"></i>
-                                    <div>
-                                        <div class="text-xl font-bold text-white">📞 Phone Numbers</div>
-                                        <div class="text-emerald-100">${data.phones.length} found</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-3">
-                                ${data.phones.map(phone => `
-                                    <div class="flex items-center justify-between p-4 bg-white/10 rounded-2xl 
-                                                hover:bg-white/20 transition-all cursor-pointer group"
-                                         onclick="copyContact('${phone}')">
-                                        <div class="flex items-center gap-3">
-                                            <i class="fas fa-mobile-alt text-emerald-400"></i>
-                                            <span class="font-mono font-semibold">${phone}</span>
-                                        </div>
-                                        <i class="fas fa-copy text-white/50 group-hover:text-white transition-all"></i>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // WhatsApp
-                if (data.whatsapp.length) {
-                    html += `
-                        <div class="p-6 rounded-3xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 
-                                    border-l-4 border-green-400 hover:shadow-2xl transition-all">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <i class="fab fa-whatsapp text-2xl text-green-400"></i>
-                                    <div>
-                                        <div class="text-xl font-bold text-white">💬 WhatsApp</div>
-                                        <div class="text-green-100">${data.whatsapp.length} links</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-3">
-                                ${data.whatsapp.map((wa, i) => `
-                                    <div class="flex items-center justify-between p-4 bg-white/10 rounded-2xl 
-                                                hover:bg-white/20 transition-all cursor-pointer group"
-                                         onclick="window.open('${wa}', '_blank')">
-                                        <div class="flex items-center gap-3">
-                                            <i class="fab fa-whatsapp text-green-400"></i>
-                                            <span class="font-mono">${wa}</span>
-                                        </div>
-                                        <i class="fas fa-external-link-alt text-white/50 group-hover:text-white"></i>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                // Emails
-                if (data.emails.length) {
-                    html += `
-                        <div class="p-6 rounded-3xl bg-gradient-to-r from-blue-500/20 to-indigo-500/20 
-                                    border-l-4 border-blue-400">
-                            <div class="flex items-center gap-3 mb-4">
-                                <i class="fas fa-envelope text-2xl text-blue-400"></i>
-                                <div class="text-xl font-bold text-white">Emails (${data.emails.length})</div>
-                            </div>
-                            ${data.emails.slice(0, 10).map(email => 
-                                `<div class="p-3 bg-white/10 rounded-xl font-mono text-sm">${email}</div>`
-                            ).join('')}
-                        </div>
-                    `;
-                }
-            } else {
-                html = '<div class="text-center py-16 text-white/60"><i class="fas fa-search text-6xl mb-6"></i><div class="text-2xl font-bold mb-2">No contacts found</div><div class="text-lg">Try another search page</div></div>';
+        async function getPageLinks(url) {
+            try {
+                const response = await fetch(proxies[0] + encodeURIComponent(url));
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const links = Array.from(doc.querySelectorAll('a[href]'))
+                    .map(a => a.href)
+                    .filter(href => href && new URL(href, url).hostname === new URL(url).hostname)
+                    .slice(0, 20); // Limit links per page
+                return links;
+            } catch (e) {
+                return [];
             }
+        }
+
+        function updateProgress() {
+            const total = visitedPages.size;
+            const percent = Math.min((total / 50) * 100, 100); // Cap at 50 pages
             
-            document.getElementById('results').innerHTML = html;
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('results').classList.remove('hidden');
-            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = Math.round(percent) + '%';
+            document.getElementById('pagesCrawled').textContent = visitedPages.size;
+            document.getElementById('totalPhones').textContent = allData.phones.size;
+            document.getElementById('totalWhatsApp').textContent = allData.whatsapp.size;
+            document.getElementById('totalEmails').textContent = allData.emails.size;
+            document.getElementById('queueCount').textContent = crawlQueue.length;
         }
 
-        function copyContact(phone) {
-            navigator.clipboard.writeText(phone).then(() => {
-                showToast(`Copied: ${phone}`);
-            });
+        function updateCurrentPage(url) {
+            document.getElementById('currentPage').textContent = new URL(url).pathname;
         }
 
-        function copyAllContacts() {
-            const phones = Array.from(document.querySelectorAll('[onclick*="copyContact"] span'))
-                               .map(el => el.textContent).join('\n');
-            navigator.clipboard.writeText(phones).then(() => {
-                showToast('All phones copied!');
-            });
+        function finalizeCrawl() {
+            isCrawling = false;
+            document.getElementById('crawlBtnText').innerHTML = '✅ Crawl Complete!';
+            document.getElementById('stopBtn').classList.add('hidden');
+            displayResults();
+            showToast(`Crawled ${visitedPages.size} pages, found ${allData.phones.size + allData.whatsapp.size + allData.emails.size} contacts!`);
         }
 
-        function downloadContacts() {
-            const contacts = Array.from(document.querySelectorAll('[onclick*="copyContact"] span'))
-                                 .map(el => el.textContent).join('\n');
-            const blob = new Blob([contacts], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'indiamart-contacts.txt';
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Downloaded!');
+        function stopCrawl() {
+            isCrawling = false;
+            showToast('Crawl stopped');
         }
 
-        function showLoading() {
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('results').classList.add('hidden');
-            document.getElementById('emptyState').classList.add('hidden');
-        }
-
-        function showError(msg) {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('results').innerHTML = `
-                <div class="text-center py-16 text-orange-400">
-                    <i class="fas fa-exclamation-triangle text-6xl mb-6"></i>
-                    <div class="text-2xl font-bold mb-4">${msg}</div>
-                    <button onclick="extractIndiaMart()" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-2xl font-bold">
-                        Try Again
-                    </button>
+        function displayResults() {
+            let html = `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    ${renderDataSection('📞 Phones', Array.from(allData.phones))}
+                    ${renderDataSection('💬 WhatsApp', Array.from(allData.whatsapp))}
+                    ${renderDataSection('✉️ Emails', Array.from(allData.emails))}
                 </div>
             `;
+            document.getElementById('resultsContent').innerHTML = html;
         }
 
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastText').textContent = msg;
-            toast.classList.remove('hidden');
-            if (type === 'error') toast.classList.add('bg-red-500', 'border-red-400');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-                if (type === 'error') toast.classList.remove('bg-red-500', 'border-red-400');
-            }, 4000);
-        }
-
-        // Auto-extract on load for demo
-        window.onload = () => setTimeout(extractIndiaMart, 1000);
-    </script>
-</body>
-</html>
+        function renderDataSection(title, items) {
+            if (items.length === 0) return '';
+            
+            return `
+                <div class="lg:col-span-1 bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:shadow-2xl transition-all">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-r from-emerald-500/30 to-teal-500/30 flex items-center justify-center">
+                            <i class="fas fa-phone text-emerald-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">${title}</h3>
+                            <div class="text-emerald-100 font-mono">${items.length} found</div>
+                        </div>
+                    </div>
+                    <div class="space-y-3 max-h-96 overflow-y-auto">
+                        ${items.slice(0, 50).map(item => `
+                            <div class="group p-4 bg-white/10
