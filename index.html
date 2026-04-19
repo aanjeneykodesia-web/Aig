@@ -3,353 +3,463 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Crawler & Extractor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Clawer - Claw Machine Game</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%); }
-        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); }
-        .progress-bar { background: linear-gradient(90deg, #10b981, #34d399); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Claw Machine */
+        .claw-machine {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 500px;
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            border: 8px solid #1a252f;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .machine-top {
+            height: 80px;
+            background: linear-gradient(145deg, #34495e, #2c3e50);
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            border-bottom: 4px solid #1a252f;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+        }
+
+        .control-btn {
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .move-btn {
+            background: linear-gradient(145deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .grab-btn {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Claw Mechanism */
+        .claw-arm {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 300px;
+            background: linear-gradient(to bottom, #bdc3c7, #95a5a6);
+            z-index: 10;
+        }
+
+        .claw-head {
+            position: absolute;
+            top: 370px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #f1c40f, #f39c12);
+            border-radius: 50%;
+            border: 4px solid #d68910;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .claw-open {
+            width: 80px;
+            height: 80px;
+        }
+
+        .claw-grip {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            background: #e74c3c;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        .claw-grip.left {
+            left: 5px;
+            transform-origin: top center;
+        }
+
+        .claw-grip.right {
+            right: 5px;
+            transform-origin: top center;
+        }
+
+        /* Prizes */
+        .prize-area {
+            position: absolute;
+            top: 90px;
+            left: 20px;
+            width: 360px;
+            height: 380px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #ecf0f1, #bdc3c7);
+        }
+
+        .prize {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .prize:hover {
+            transform: scale(1.1);
+            z-index: 5;
+        }
+
+        .prize.captured {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        /* Prize styles */
+        .teddy { 
+            width: 50px; height: 50px; 
+            background: radial-gradient(circle at 30% 30%, #e91e63, #ad1457);
+            border-radius: 50% 40% 50% 40%;
+            top: 50px; left: 50px;
+        }
+
+        .ball { 
+            width: 45px; height: 45px; 
+            background: radial-gradient(circle, #ff6b6b, #ee5a24);
+            border-radius: 50%;
+            top: 100px; left: 250px;
+        }
+
+        .candy { 
+            width: 40px; height: 60px; 
+            background: linear-gradient(45deg, #ff9ff3, #f368e0);
+            border-radius: 20px 20px 5px 5px;
+            top: 200px; left: 80px;
+        }
+
+        .ring { 
+            width: 55px; height: 55px; 
+            border: 8px solid #00d2d3;
+            border-radius: 50%;
+            border-top: none;
+            top: 150px; left: 280px;
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Score */
+        .score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #f1c40f;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 1s ease-out forwards;
+        }
+
+        @keyframes particle-float {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0);
+            }
+        }
+
+        /* Moving between pages effect */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, transparent, rgba(0,0,0,0.8));
+            pointer-events: none;
+            opacity: 0;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+        }
     </style>
 </head>
-<body class="gradient-bg min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-4 bg-white/10 backdrop-blur-xl px-10 py-6 rounded-3xl mb-8 shadow-2xl border border-white/20">
-                <i class="fas fa-spider text-4xl text-emerald-400"></i>
-                <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
-                    Website Crawler
-                </h1>
+<body>
+    <div class="game-container">
+        <div class="score">Score: <span id="score">0</span></div>
+        
+        <div class="claw-machine">
+            <div class="machine-top"></div>
+            <div class="claw-arm" id="clawArm"></div>
+            <div class="claw-head" id="clawHead">
+                <div class="claw-grip left" id="leftGrip"></div>
+                <div class="claw-grip right" id="rightGrip"></div>
             </div>
-            <p class="text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-                Enter URL → Crawls ALL linked pages → Extracts phones, emails, WhatsApp automatically
-            </p>
-        </div>
-
-        <!-- Controls -->
-        <div class="glass rounded-3xl p-8 lg:p-12 mb-12 shadow-2xl">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Starting URL -->
-                <div>
-                    <label class="block text-white/90 font-semibold mb-3 flex items-center gap-2">
-                        <i class="fas fa-link text-emerald-400"></i> Starting URL
-                    </label>
-                    <div class="relative">
-                        <input id="startUrl" type="url" placeholder="https://example.com" 
-                               class="w-full p-5 pl-12 pr-32 rounded-2xl bg-white/5 text-white placeholder-white/60 
-                                      border border-white/20 focus:border-emerald-400 focus:outline-none 
-                                      focus:ring-4 ring-emerald-400/30 text-lg font-mono"
-                               value="https://m.indiamart.com/isearch.php?s=rice">
-                        <i class="fas fa-globe absolute left-4 top-1/2 -translate-y-1/2 text-emerald-400"></i>
-                    </div>
-                </div>
-
-                <!-- Crawl Depth -->
-                <div>
-                    <label class="block text-white/90 font-semibold mb-3 flex items-center gap-2">
-                        <i class="fas fa-layer-group text-blue-400"></i> Max Depth
-                    </label>
-                    <select id="maxDepth" class="w-full p-5 rounded-2xl bg-white/5 text-white border border-white/20 focus:border-blue-400 focus:ring-4 ring-blue-400/30">
-                        <option value="1">1 page (Fast)</option>
-                        <option value="2" selected>2 pages (Recommended)</option>
-                        <option value="3">3 pages (Deep)</option>
-                        <option value="5">5 pages (Full)</option>
-                    </select>
-                </div>
-
-                <!-- Crawl Speed -->
-                <div>
-                    <label class="block text-white/90 font-semibold mb-3 flex items-center gap-2">
-                        <i class="fas fa-tachometer-alt text-purple-400"></i> Speed
-                    </label>
-                    <select id="speed" class="w-full p-5 rounded-2xl bg-white/5 text-white border border-white/20 focus:border-purple-400 focus:ring-4 ring-purple-400/30">
-                        <option value="1000">Slow (Safe)</option>
-                        <option value="500" selected>Medium</option>
-                        <option value="200">Fast</option>
-                        <option value="100">Turbo</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-4 mt-10">
-                <button onclick="startCrawl()" 
-                        class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 
-                               text-white py-6 px-8 rounded-3xl font-bold text-xl shadow-2xl hover:shadow-3xl 
-                               transition-all duration-300 flex items-center justify-center gap-4 text-lg">
-                    <i class="fas fa-play-circle text-2xl"></i>
-                    <span id="crawlBtnText">🚀 Start Crawling</span>
-                </button>
-                <button onclick="stopCrawl()" 
-                        class="px-8 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 
-                               text-white py-6 rounded-3xl font-bold shadow-xl hover:shadow-2xl transition-all
-                               flex items-center justify-center gap-3 hidden" id="stopBtn">
-                    <i class="fas fa-stop-circle text-xl"></i> Stop
-                </button>
+            <div class="prize-area">
+                <div class="prize teddy" data-value="100"></div>
+                <div class="prize ball" data-value="50"></div>
+                <div class="prize candy" data-value="75"></div>
+                <div class="prize ring" data-value="80"></div>
             </div>
         </div>
 
-        <!-- Progress & Stats -->
-        <div class="glass rounded-3xl p-8 mb-12 shadow-2xl hidden" id="progressSection">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-emerald-400" id="pagesCrawled">0</div>
-                    <div class="text-white/70 text-sm uppercase tracking-wide">Pages Crawled</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-blue-400" id="totalPhones">0</div>
-                    <div class="text-white/70 text-sm uppercase tracking-wide">Phones Found</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-green-400" id="totalWhatsApp">0</div>
-                    <div class="text-white/70 text-sm uppercase tracking-wide">WhatsApp</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-purple-400" id="totalEmails">0</div>
-                    <div class="text-white/70 text-sm uppercase tracking-wide">Emails</div>
-                </div>
-            </div>
-            
-            <div class="mb-8">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="flex-1 bg-white/5 rounded-full h-3"></div>
-                    <div class="text-white font-mono text-sm min-w-[100px]" id="progressText">0%</div>
-                </div>
-                <div class="w-full bg-white/5 rounded-full h-4 overflow-hidden">
-                    <div class="progress-bar h-full rounded-full transition-all duration-300" id="progressBar" style="width: 0%"></div>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="currentPageSection">
-                <div>
-                    <div class="text-white/90 font-semibold mb-2 flex items-center gap-2">
-                        <i class="fas fa-eye text-blue-400"></i> Current Page
-                    </div>
-                    <div class="text-white/70 text-sm font-mono truncate bg-white/5 p-3 rounded-xl" id="currentPage">None</div>
-                </div>
-                <div>
-                    <div class="text-white/90 font-semibold mb-2 flex items-center gap-2">
-                        <i class="fas fa-list text-purple-400"></i> Queue
-                    </div>
-                    <div class="text-white/70 text-sm font-mono bg-white/5 p-3 rounded-xl" id="queueCount">0</div>
-                </div>
-            </div>
+        <div class="controls">
+            <button class="control-btn move-btn" onclick="moveClaw('left')">← Move Left</button>
+            <button class="control-btn move-btn" onclick="moveClaw('right')">→ Move Right</button>
+            <button class="control-btn grab-btn" onclick="grabPrize()">🕷️ GRAB</button>
         </div>
 
-        <!-- Results -->
-        <div class="glass rounded-3xl p-8 lg:p-12 shadow-2xl" id="resultsSection">
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-3xl font-bold text-white flex items-center gap-4">
-                    <i class="fas fa-database text-emerald-400"></i> Extracted Data
-                </h2>
-                <div class="flex gap-3">
-                    <button onclick="copyAllData()" class="p-4 bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-400/50 text-emerald-100 rounded-2xl transition-all flex items-center gap-2">
-                        <i class="fas fa-copy"></i> Copy All
-                    </button>
-                    <button onclick="downloadAllData()" class="p-4 bg-purple-500/20 hover:bg-purple-500/40 border border-purple-400/50 text-purple-100 rounded-2xl transition-all flex items-center gap-2">
-                        <i class="fas fa-download"></i> Download CSV
-                    </button>
-                    <button onclick="clearAll()" class="p-4 bg-gray-500/20 hover:bg-gray-500/40 border border-gray-400/50 text-gray-100 rounded-2xl transition-all flex items-center gap-2">
-                        <i class="fas fa-trash"></i> Clear
-                    </button>
-                </div>
-            </div>
-            
-            <div id="resultsContent" class="space-y-6">
-                <div class="text-center py-20 text-white/50">
-                    <i class="fas fa-play text-6xl mb-8 opacity-30"></i>
-                    <div class="text-2xl font-semibold mb-4">Ready to crawl</div>
-                    <div class="text-lg">Click "Start Crawling" to begin</div>
-                </div>
-            </div>
-        </div>
+        <div class="page-transition" id="pageTransition"></div>
     </div>
 
     <script>
-        // Global state
-        let isCrawling = false;
-        let crawlQueue = [];
-        let visitedPages = new Set();
-        let allData = { phones: new Set(), whatsapp: new Set(), emails: new Set() };
-        let currentDepth = 0;
+        class ClawerGame {
+            constructor() {
+                this.clawX = 50; // Starting position (0-100%)
+                this.clawY = 370;
+                this.score = 0;
+                this.isGrabbing = false;
+                this.grabbedPrize = null;
+                this.init();
+            }
 
-        // Multiple CORS proxies
-        const proxies = [
-            'https://api.allorigins.win/raw?url=',
-            'https://corsproxy.io/?',
-            'https://thingproxy.freeboard.io/fetch/'
-        ];
+            init() {
+                this.clawHead = document.getElementById('clawHead');
+                this.clawArm = document.getElementById('clawArm');
+                this.leftGrip = document.getElementById('leftGrip');
+                this.rightGrip = document.getElementById('rightGrip');
+                this.scoreEl = document.getElementById('score');
+                this.prizes = document.querySelectorAll('.prize');
+                this.updateScore();
+                this.attachPrizeEvents();
+            }
 
-        async function startCrawl() {
-            const startUrl = document.getElementById('startUrl').value.trim();
-            if (!startUrl) return showToast('Enter starting URL', 'error');
+            moveClaw(direction) {
+                if (this.isGrabbing) return;
 
-            isCrawling = true;
-            document.getElementById('crawlBtnText').innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Crawling...';
-            document.getElementById('stopBtn').classList.remove('hidden');
-            document.getElementById('progressSection').classList.remove('hidden');
+                const step = 10;
+                if (direction === 'left' && this.clawX > 0) {
+                    this.clawX = Math.max(0, this.clawX - step);
+                } else if (direction === 'right' && this.clawX < 100) {
+                    this.clawX = Math.min(100, this.clawX + step);
+                }
 
-            // Reset state
-            crawlQueue = [startUrl];
-            visitedPages.clear();
-            allData = { phones: new Set(), whatsapp: new Set(), emails: new Set() };
-            currentDepth = 0;
+                this.updateClawPosition();
+            }
 
-            await crawlWebsite();
-        }
-
-        async function crawlWebsite() {
-            const maxDepth = parseInt(document.getElementById('maxDepth').value);
-            const delay = parseInt(document.getElementById('speed').value);
-
-            while (crawlQueue.length > 0 && isCrawling && currentDepth <= maxDepth) {
-                const url = crawlQueue.shift();
+            updateClawPosition() {
+                const machineRect = document.querySelector('.claw-machine').getBoundingClientRect();
+                const xPos = machineRect.left + (machineRect.width * (this.clawX / 100));
                 
-                if (visitedPages.has(url)) continue;
-                visitedPages.add(url);
+                this.clawArm.style.left = `${xPos - machineRect.left}px`;
+                this.clawHead.style.left = `${xPos - machineRect.left}px`;
+            }
 
-                updateProgress();
-                
-                try {
-                    await processPage(url);
+            grabPrize() {
+                if (this.isGrabbing) return;
+
+                this.isGrabbing = true;
+                this.clawHead.classList.add('claw-open');
+
+                // Check for prize collision
+                const clawRect = this.clawHead.getBoundingClientRect();
+                let caughtPrize = null;
+
+                this.prizes.forEach(prize => {
+                    if (prize.classList.contains('captured')) return;
                     
-                    // Add new links (same domain, next depth)
-                    if (currentDepth < maxDepth) {
-                        const newLinks = await getPageLinks(url);
-                        crawlQueue.push(...newLinks.slice(0, 10)); // Limit per page
+                    const prizeRect = prize.getBoundingClientRect();
+                    if (this.isColliding(clawRect, prizeRect)) {
+                        caughtPrize = prize;
                     }
-                    
-                    currentDepth++;
-                } catch (e) {
-                    console.log(`Failed to process ${url}:`, e);
+                });
+
+                if (caughtPrize) {
+                    this.grabbedPrize = caughtPrize;
+                    caughtPrize.classList.add('captured');
+                    this.createParticles(clawRect);
                 }
+
+                // Animate grab
+                setTimeout(() => {
+                    this.clawHead.classList.remove('claw-open');
+                    this.liftPrize();
+                }, 500);
+            }
+
+            isColliding(rect1, rect2) {
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            }
+
+            liftPrize() {
+                if (!this.grabbedPrize) {
+                    this.isGrabbing = false;
+                    return;
+                }
+
+                // Lift claw
+                this.clawY = 100;
+                this.updateClawPosition();
+
+                setTimeout(() => {
+                    if (this.grabbedPrize) {
+                        this.score += parseInt(this.grabbedPrize.dataset.value);
+                        this.updateScore();
+                        this.triggerPageTransition();
+                    }
+                    this.resetClaw();
+                }, 1000);
+            }
+
+            resetClaw() {
+                this.clawY = 370;
+                this.clawX = 50;
+                this.grabbedPrize = null;
+                this.isGrabbing = false;
+                this.updateClawPosition();
+            }
+
+            updateScore() {
+                this.scoreEl.textContent = this.score;
+            }
+
+            createParticles(rect) {
+                for (let i = 0; i < 8; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = `${rect.left + Math.random() * rect.width}px`;
+                    particle.style.top = `${rect.bottom}px`;
+                    document.body.appendChild(particle);
+
+                    setTimeout(() => particle.remove(), 1000);
+                }
+            }
+
+            triggerPageTransition() {
+                const transition = document.getElementById('pageTransition');
+                transition.classList.add('active');
                 
-                await new Promise(r => setTimeout(r, delay));
+                setTimeout(() => {
+                    transition.classList.remove('active');
+                }, 1500);
             }
-            
-            if (isCrawling) {
-                finalizeCrawl();
+
+            attachPrizeEvents() {
+                this.prizes.forEach(prize => {
+                    prize.addEventListener('click', (e) => {
+                        this.moveClawToPrize(prize);
+                    });
+                });
             }
-        }
 
-        async function processPage(url) {
-            for (const proxy of proxies) {
-                try {
-                    const response = await fetch(proxy + encodeURIComponent(url));
-                    if (response.ok) {
-                        const html = await response.text();
-                        extractDataFromPage(html, url);
-                        updateCurrentPage(url);
-                        return;
-                    }
-                } catch (e) {
-                    continue;
-                }
-            }
-        }
-
-        function extractDataFromPage(html, url) {
-            const text = html
-                .replace(/<script\b[^<]*(?:<\/script>|$)/gi, '')
-                .replace(/<style\b[^<]*(?:<\/style>|$)/gi, '')
-                .replace(/<[^>]+>/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-
-            // Extract phones (IndiaMart optimized)
-            const phoneRegex = /(\+91|91|0)?[6-9]\d{9}|\d{10}/g;
-            text.match(phoneRegex)?.forEach(phone => {
-                const clean = phone.replace(/[^\d]/g, '');
-                if (clean.length === 10 && /^[6-9]/.test(clean)) {
-                    allData.phones.add('+' + 91 + clean);
-                }
-            });
-
-            // WhatsApp
-            const waRegex = /(whatsapp|wa|chat)\S*(?:\/|:)(\+91|91)?([6-9]\d{9})/gi;
-            text.match(waRegex)?.forEach(match => {
-                const num = match.match(/\d{10}/)?.[0];
-                if (num) allData.whatsapp.add('https://wa.me/91' + num);
-            });
-
-            // Emails
-            const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
-            text.match(emailRegex)?.forEach(email => allData.emails.add(email));
-        }
-
-        async function getPageLinks(url) {
-            try {
-                const response = await fetch(proxies[0] + encodeURIComponent(url));
-                const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const links = Array.from(doc.querySelectorAll('a[href]'))
-                    .map(a => a.href)
-                    .filter(href => href && new URL(href, url).hostname === new URL(url).hostname)
-                    .slice(0, 20); // Limit links per page
-                return links;
-            } catch (e) {
-                return [];
+            moveClawToPrize(prize) {
+                const prizeRect = prize.getBoundingClientRect();
+                const machineRect = document.querySelector('.claw-machine').getBoundingClientRect();
+                const targetX = ((prizeRect.left + prizeRect.width / 2 - machineRect.left) / machineRect.width) * 100;
+                
+                this.clawX = targetX;
+                this.updateClawPosition();
             }
         }
 
-        function updateProgress() {
-            const total = visitedPages.size;
-            const percent = Math.min((total / 50) * 100, 100); // Cap at 50 pages
-            
-            document.getElementById('progressBar').style.width = percent + '%';
-            document.getElementById('progressText').textContent = Math.round(percent) + '%';
-            document.getElementById('pagesCrawled').textContent = visitedPages.size;
-            document.getElementById('totalPhones').textContent = allData.phones.size;
-            document.getElementById('totalWhatsApp').textContent = allData.whatsapp.size;
-            document.getElementById('totalEmails').textContent = allData.emails.size;
-            document.getElementById('queueCount').textContent = crawlQueue.length;
-        }
+        // Initialize game
+        const game = new ClawerGame();
 
-        function updateCurrentPage(url) {
-            document.getElementById('currentPage').textContent = new URL(url).pathname;
-        }
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    game.moveClaw('left');
+                    break;
+                case 'ArrowRight':
+                    game.moveClaw('right');
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    game.grabPrize();
+                    break;
+            }
+        });
 
-        function finalizeCrawl() {
-            isCrawling = false;
-            document.getElementById('crawlBtnText').innerHTML = '✅ Crawl Complete!';
-            document.getElementById('stopBtn').classList.add('hidden');
-            displayResults();
-            showToast(`Crawled ${visitedPages.size} pages, found ${allData.phones.size + allData.whatsapp.size + allData.emails.size} contacts!`);
-        }
-
-        function stopCrawl() {
-            isCrawling = false;
-            showToast('Crawl stopped');
-        }
-
-        function displayResults() {
-            let html = `
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    ${renderDataSection('📞 Phones', Array.from(allData.phones))}
-                    ${renderDataSection('💬 WhatsApp', Array.from(allData.whatsapp))}
-                    ${renderDataSection('✉️ Emails', Array.from(allData.emails))}
-                </div>
-            `;
-            document.getElementById('resultsContent').innerHTML = html;
-        }
-
-        function renderDataSection(title, items) {
-            if (items.length === 0) return '';
-            
-            return `
-                <div class="lg:col-span-1 bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:shadow-2xl transition-all">
-                    <div class="flex items-center gap-4 mb-8">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-r from-emerald-500/30 to-teal-500/30 flex items-center justify-center">
-                            <i class="fas fa-phone text-emerald-400 text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-white">${title}</h3>
-                            <div class="text-emerald-100 font-mono">${items.length} found</div>
-                        </div>
-                    </div>
-                    <div class="space-y-3 max-h-96 overflow-y-auto">
-                        ${items.slice(0, 50).map(item => `
-                            <div class="group p-4 bg-white/10
+        // Responsive
+        window.addEventListener('resize', () => {
+            game.updateClawPosition();
+        });
+    </script>
+</body>
+</html>
