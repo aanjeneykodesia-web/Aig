@@ -3,129 +3,220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web Data Extractor Pro - Downloads</title>
+<title>🔗 Link Crawler + Data Extractor Pro</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { 
-    font-family: Arial, sans-serif; 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+    color: #333;
     padding: 20px; 
     min-height: 100vh;
 }
-.container { max-width: 1100px; margin: 0 auto; }
+.container { max-width: 1200px; margin: 0 auto; }
 .card { 
-    background: white; 
-    border-radius: 20px; 
-    padding: 30px; 
-    margin-bottom: 25px; 
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    background: rgba(255,255,255,0.95); 
+    backdrop-filter: blur(10px);
+    border-radius: 24px; 
+    padding: 35px; 
+    margin-bottom: 30px; 
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
 }
-h1 { color: #333; margin-bottom: 10px; text-align: center; }
-h3 { color: #555; margin-bottom: 20px; }
+h1 { 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5em; 
+    text-align: center; 
+    margin-bottom: 15px;
+}
+h3 { color: #555; margin-bottom: 25px; border-left: 4px solid #667eea; padding-left: 15px; }
 
-input, select { 
+input, select, textarea { 
     width: 100%; 
-    padding: 15px; 
+    padding: 18px; 
     border: 2px solid #e1e5e9; 
-    border-radius: 12px; 
-    margin-bottom: 20px; 
+    border-radius: 16px; 
+    margin-bottom: 25px; 
     font-size: 16px;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.8);
 }
-input:focus { 
+input:focus, select:focus, textarea:focus { 
     outline: none; 
     border-color: #667eea; 
-    box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+    box-shadow: 0 0 0 4px rgba(102,126,234,0.15);
+    transform: translateY(-2px);
 }
 
 .btn { 
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
     color: white; 
     border: none; 
-    padding: 15px 25px; 
-    border-radius: 12px; 
+    padding: 18px 30px; 
+    border-radius: 16px; 
     font-size: 16px; 
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer; 
     transition: all 0.3s;
-    margin: 5px;
-    width: 100%;
-    box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+    margin: 8px;
+    width: calc(50% - 16px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.3);
 }
-.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,123,255,0.4); }
+.btn:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(102,126,234,0.4); }
 .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+.btn-full { width: 100%; }
 
-.download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+.download-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 20px; 
+    margin-top: 30px;
+}
 .download-btn { 
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-    box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+    box-shadow: 0 8px 25px rgba(40,167,69,0.3);
+    width: 100%;
 }
-.download-btn:hover { box-shadow: 0 8px 25px rgba(40,167,69,0.4); }
+.download-btn:hover { box-shadow: 0 15px 35px rgba(40,167,69,0.4); }
 
 .status { 
-    padding: 20px; 
-    border-radius: 12px; 
-    margin: 20px 0; 
+    padding: 25px; 
+    border-radius: 16px; 
+    margin: 25px 0; 
     text-align: center; 
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 16px;
 }
-.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+.success { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; }
+.error { background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); color: #721c24; }
+.info { background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); color: #0c5460; }
 
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-th { background: #f8f9fa; font-weight: 600; color: #333; }
+.tree-view {
+    background: #f8f9fa; border-radius: 12px; padding: 20px; margin: 20px 0;
+    max-height: 300px; overflow-y: auto; font-family: monospace;
+}
+.tree-node { margin-left: 20px; }
+.link-item { 
+    display: flex; justify-content: space-between; 
+    padding: 8px; margin: 4px 0; 
+    background: white; border-radius: 8px; 
+    cursor: pointer;
+}
+.link-item:hover { background: #e3f2fd; }
+
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 25px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+th, td { 
+    padding: 18px 15px; 
+    text-align: left; 
+    border-bottom: 1px solid #eee;
+}
+th { 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+    color: white; 
+    font-weight: 700; 
+    position: sticky; top: 0;
+}
 tr:hover { background: #f8f9fa; }
 
 .progress { 
-    width: 100%; height: 12px; 
-    background: #e9ecef; 
-    border-radius: 6px; 
-    margin: 15px 0;
+    width: 100%; height: 15px; 
+    background: rgba(255,255,255,0.2); 
+    border-radius: 10px; 
+    margin: 20px 0;
     overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 .progress-bar { 
     height: 100%; 
-    background: linear-gradient(90deg, #667eea, #764ba2); 
+    background: linear-gradient(90deg, #28a745, #20c997, #17a2b8); 
     width: 0%; 
-    transition: width 0.4s ease;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 20px rgba(40,167,69,0.5);
 }
 
-.results { display: none; animation: slideIn 0.5s; }
-.results.show { display: block; }
-@keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px; margin: 25px 0;
+}
+.stat-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    padding: 25px; border-radius: 16px; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.stat-number { font-size: 2.5em; font-weight: 800; color: #667eea; }
 
-@media (max-width: 768px) { 
-    .container { padding: 10px; } 
-    .card { padding: 20px; }
-    .download-grid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+    .btn { width: 100%; margin: 8px 0; }
+    .stats-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 <div class="container">
     <div class="card">
-        <h1>🚀 Web Data Extractor Pro</h1>
-        <p>Extract & Download data from multiple pages automatically!</p>
+        <h1>🕷️ Link Crawler + Data Extractor</h1>
+        <p>Follows ALL links + extracts data from entire website!</p>
     </div>
     
     <div class="card">
         <label><strong>🌐 Starting URL:</strong></label>
         <input type="url" id="startUrl" value="https://quotes.toscrape.com/" placeholder="https://example.com">
         
-        <label><strong>📊 Max Pages:</strong></label>
-        <input type="number" id="maxPages" value="5" min="1" max="20">
+        <label><strong>🔗 Max Links to Follow:</strong></label>
+        <input type="number" id="maxLinks" value="10" min="1" max="50">
         
-        <label><strong>🎯 CSS Selector:</strong></label>
-        <input type="text" id="cssSelector" value=".quote, .item, h2, h3, article" placeholder=".product, h2">
+        <label><strong>📊 Max Depth (link levels):</strong></label>
+        <input type="number" id="maxDepth" value="2" min="1" max="5">
         
-        <button class="btn" onclick="startExtraction()" id="startBtn">🚀 Start Extraction</button>
+        <label><strong>🎯 Data Selectors (comma separated):</strong></label>
+        <textarea id="cssSelectors" rows="3" placeholder=".item, h2, h3, .post, article, .product">.quote, h2, h3, article</textarea>
+        
+        <label><strong>🔗 Link Selectors (follow these links):</strong></label>
+        <input type="text" id="linkSelectors" value="a[href], .nav a, .pagination a" placeholder="a[href]">
+        
+        <button class="btn btn-full" onclick="startCrawl()" id="startBtn">🕷️ Start Full Website Crawl</button>
         
         <div class="progress" id="progress" style="display:none;">
             <div class="progress-bar" id="progressBar"></div>
         </div>
-        <div id="status" class="status info">Ready to extract data...</div>
+        <div id="status" class="status info">Ready to crawl entire website...</div>
+    </div>
+    
+    <div class="card" id="statsCard" style="display:none;">
+        <h3>📊 Crawl Statistics</h3>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalPages">0</div>
+                <div>Total Pages</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalRecords">0</div>
+                <div>Records Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalLinks">0</div>
+                <div>Links Crawled</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="maxDepthReached">0</div>
+                <div>Max Depth</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3>🔗 Links Found <span id="linkCount">(0)</span></h3>
+        <div class="tree-view" id="linkTree"></div>
     </div>
     
     <div class="card results" id="results">
@@ -137,102 +228,113 @@ tr:hover { background: #f8f9fa; }
                     <th>URL</th>
                     <th>Title/Content</th>
                     <th>Page</th>
-                    <th>Length</th>
+                    <th>Depth</th>
+                    <th>Size</th>
                 </tr>
             </thead>
             <tbody id="dataBody"></tbody>
         </table>
         
-        <div style="margin-top: 25px;">
-            <h4>💾 Download Options:</h4>
-            <div class="download-grid">
-                <button class="btn download-btn" onclick="downloadJSON()">📄 JSON</button>
-                <button class="btn download-btn" onclick="downloadCSV()">📊 CSV</button>
-                <button class="btn download-btn" onclick="downloadExcel()">📈 Excel</button>
-                <button class="btn download-btn" onclick="downloadTXT()">📝 Text</button>
-                <button class="btn download-btn" onclick="downloadSQL()">🗄️ SQL</button>
-            </div>
-            <div style="margin-top: 15px;">
-                <button class="btn" onclick="copyToClipboard()" style="background:#6f42c1;">📋 Copy JSON</button>
-                <button class="btn" onclick="shareData()" style="background:#fd7e14;">📤 Share</button>
-                <button class="btn" onclick="clearResults()" style="background:#dc3545;">🗑️ Clear</button>
-            </div>
+        <div class="download-grid">
+            <button class="btn download-btn" onclick="downloadJSON()">📄 JSON</button>
+            <button class="btn download-btn" onclick="downloadCSV()">📊 CSV</button>
+            <button class="btn download-btn" onclick="downloadExcel()">📈 Excel</button>
+            <button class="btn download-btn" onclick="downloadTXT()">📝 Text</button>
+            <button class="btn download-btn" onclick="downloadSQL()">🗄️ SQL</button>
         </div>
     </div>
 </div>
 
 <script>
-let extractedData = [];
-let currentPage = 0;
-let isExtracting = false;
+let allData = [];
+let visitedUrls = new Set();
+let foundLinks = [];
+let currentDepth = 0;
+let isCrawling = false;
 
-async function startExtraction() {
-    if (isExtracting) return;
+async function startCrawl() {
+    if (isCrawling) return;
     
     const startUrl = document.getElementById('startUrl').value.trim();
-    const maxPages = parseInt(document.getElementById('maxPages').value);
-    const cssSelector = document.getElementById('cssSelector').value.trim();
+    const maxLinks = parseInt(document.getElementById('maxLinks').value);
+    const maxDepth = parseInt(document.getElementById('maxDepth').value);
+    const cssSelectors = document.getElementById('cssSelectors').value.trim();
+    const linkSelectors = document.getElementById('linkSelectors').value.trim();
     
     if (!startUrl) {
-        showStatus('❌ Please enter a valid URL', 'error');
+        showStatus('❌ Enter starting URL', 'error');
         return;
     }
     
-    isExtracting = true;
-    extractedData = [];
-    currentPage = 0;
+    // Reset
+    isCrawling = true;
+    allData = [];
+    visitedUrls.clear();
+    foundLinks = [];
+    currentDepth = 0;
     
     document.getElementById('startBtn').disabled = true;
     document.getElementById('progress').style.display = 'block';
+    document.getElementById('statsCard').style.display = 'none';
     document.getElementById('results').classList.remove('show');
     
-    showStatus('🚀 Starting extraction...', 'info');
+    showStatus('🕷️ Starting full website crawl...', 'info');
     
     try {
-        await extractPages(startUrl, maxPages, cssSelector);
+        await crawlWebsite(startUrl, maxLinks, maxDepth, cssSelectors.split(',').map(s=>s.trim()), linkSelectors.split(',').map(s=>s.trim()));
         showResults();
-        showStatus(`✅ Complete! ${extractedData.length} records extracted`, 'success');
+        updateStats();
+        showStatus(`✅ Crawl complete! ${allData.length} records from ${visitedUrls.size} pages`, 'success');
     } catch (e) {
-        showStatus(`❌ Error: ${e.message}`, 'error');
-        console.error('Extraction error:', e);
+        showStatus(`❌ Crawl failed: ${e.message}`, 'error');
     } finally {
-        isExtracting = false;
+        isCrawling = false;
         document.getElementById('startBtn').disabled = false;
         document.getElementById('progress').style.display = 'none';
     }
 }
 
-async function extractPages(startUrl, maxPages, selector) {
-    let currentUrl = startUrl;
-    const selectors = selector.split(',').map(s => s.trim()).filter(s => s);
+async function crawlWebsite(startUrl, maxLinks, maxDepth, dataSelectors, linkSelectors) {
+    const queue = [{ url: startUrl, depth: 0 }];
+    let processed = 0;
     
-    while (currentUrl && currentPage < maxPages) {
-        currentPage++;
-        updateProgress((currentPage / maxPages) * 100);
-        showStatus(`📄 Extracting page ${currentPage}/${maxPages}: ${currentUrl.substring(0, 60)}...`, 'info');
+    while (queue.length > 0 && processed < maxLinks && currentDepth <= maxDepth) {
+        const { url, depth } = queue.shift();
+        
+        if (visitedUrls.has(url) || !isValidUrl(url)) continue;
+        
+        visitedUrls.add(url);
+        processed++;
+        currentDepth = Math.max(currentDepth, depth);
+        
+        updateProgress((processed / maxLinks) * 100);
+        showStatus(`🕷️ Crawling [${depth}] ${url.substring(0, 60)}... (${processed}/${maxLinks})`, 'info');
         
         try {
-            const pageData = await fetchPageData(currentUrl, selectors, currentPage);
-            extractedData.push(...pageData);
+            // Extract data
+            const pageData = await extractFromPage(url, dataSelectors, depth + 1);
+            allData.push(...pageData);
             
-            currentUrl = await findNextPage(currentUrl);
-            await new Promise(r => setTimeout(r, 800)); // Rate limit
+            // Find new links
+            const newLinks = await findLinksOnPage(url, linkSelectors, depth + 1);
+            foundLinks.push(...newLinks.slice(0, 10)); // Limit per page
+            
+            // Add to queue (same domain only)
+            const sameDomainLinks = newLinks.filter(link => isSameDomain(link, startUrl));
+            queue.push(...sameDomainLinks.slice(0, 5)); // Limit queue
+            
+            updateLinkTree();
+            
+            await new Promise(r => setTimeout(r, 500)); // Polite delay
         } catch (e) {
-            console.error(`Page ${currentPage} failed:`, e);
-            break;
+            console.error(`Failed ${url}:`, e);
         }
     }
 }
 
-async function fetchPageData(url, selectors, pageNum) {
+async function extractFromPage(url, selectors, pageNum) {
     try {
-        const response = await fetch(url, { 
-            method: 'GET',
-            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; DataExtractor/1.0)' }
-        });
-        
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        
+        const response = await fetch(url);
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
@@ -240,14 +342,15 @@ async function fetchPageData(url, selectors, pageNum) {
         
         for (const selector of selectors) {
             const elements = doc.querySelectorAll(selector);
-            elements.forEach((el, index) => {
-                const text = el.textContent.trim();
-                if (text && text.length > 10) {
+            elements.forEach(el => {
+                const text = el.textContent?.trim();
+                if (text && text.length > 5) {
                     items.push({
                         url: url,
                         title: text.substring(0, 80),
-                        content: text,
+                        content: text.substring(0, 500),
                         page: pageNum,
+                        depth: currentDepth,
                         selector: selector,
                         length: text.length,
                         timestamp: new Date().toISOString()
@@ -255,39 +358,55 @@ async function fetchPageData(url, selectors, pageNum) {
                 }
             });
         }
-        
-        return items.slice(0, 15); // Max 15 per page
-    } catch (error) {
-        console.error('Fetch error:', error);
+        return items.slice(0, 20);
+    } catch {
         return [];
     }
 }
 
-async function findNextPage(currentUrl) {
+async function findLinksOnPage(url, selectors, depth) {
     try {
-        const response = await fetch(currentUrl);
+        const response = await fetch(url);
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
+        const links = [];
         
-        const nextSelectors = [
-            'a[rel="next"]',
-            '.next a',
-            '.pagination .next',
-            'a.next',
-            'a[href*="page="][href*="2"]',
-            '.page-next'
-        ];
-        
-        for (const selector of nextSelectors) {
-            const nextLink = doc.querySelector(selector);
-            if (nextLink?.href && nextLink.href !== currentUrl) {
-                return nextLink.href.startsWith('http') ? nextLink.href : new URL(nextLink.href, currentUrl).href;
-            }
+        for (const selector of selectors) {
+            const elements = doc.querySelectorAll(selector);
+            elements.forEach(a => {
+                if (a.href && isValidUrl(a.href)) {
+                    links.push({
+                        url: a.href,
+                        text: a.textContent?.trim().substring(0, 50) || 'Link',
+                        depth: depth,
+                        foundOn: url
+                    });
+                }
+            });
         }
-        return null;
+        return [...new Set(links.map(l => l.url))].map(u => 
+            links.find(l => l.url === u)
+        );
     } catch {
-        return null;
+        return [];
+    }
+}
+
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return string.startsWith('http');
+    } catch {
+        return false;
+    }
+}
+
+function isSameDomain(link, baseUrl) {
+    try {
+        return new URL(link).origin === new URL(baseUrl).origin;
+    } catch {
+        return false;
     }
 }
 
@@ -295,136 +414,241 @@ function updateProgress(percent) {
     document.getElementById('progressBar').style.width = Math.min(100, percent) + '%';
 }
 
-function showStatus(message, type) {
-    const statusEl = document.getElementById('status');
-    statusEl.textContent = message;
-    statusEl.className = `status ${type}`;
+function updateLinkTree() {
+    const tree = document.getElementById('linkTree');
+    tree.innerHTML = foundLinks.slice(-20).map((link, i) => `
+        <div class="link-item">
+            <span style="margin-left: ${link.depth * 15}px;">
+                📎 ${link.text || link.url.substring(0, 40)}...
+            </span>
+            <small style="color: #666;">${link.depth}L</small>
+        </div>
+    `).join('');
+    document.getElementById('linkCount').textContent = `(${foundLinks.length})`;
+}
+
+function updateStats() {
+    document.getElementById('statsCard').style.display = 'block';
+    document.getElementById('totalPages').textContent = visitedUrls.size;
+    document.getElementById('totalRecords').textContent = allData.length.toLocaleString();
+    document.getElementById('totalLinks').textContent = foundLinks.length;
+    document.getElementById('maxDepthReached').textContent = currentDepth;
+}
+
+function showStatus(msg, type) {
+    const el = document.getElementById('status');
+    el.innerHTML = msg;
+    el.className = `status ${type}`;
 }
 
 function showResults() {
-    const tbody = document.getElementById('dataBody');
-    const countEl = document.getElementById('recordCount');
-    
-    countEl.textContent = extractedData.length.toLocaleString();
-    tbody.innerHTML = '';
-    
-    extractedData.slice(0, 100).forEach((item, index) => {
-        const row = tbody.insertRow();
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td><a href="${item.url}" target="_blank" style="color:#007bff;">${item.url.substring(0, 40)}...</a></td>
-            <td>${item.title}</td>
-            <td>${item.page}</td>
-            <td>${item.length}</td>
-        `;
-    });
-    
-    document.getElementById('results').classList.add('show');
-}
-
-// 🔥 PRO DOWNLOAD FUNCTIONS
-function downloadJSON() {
-    const dataStr = JSON.stringify(extractedData, null, 2);
-    downloadFile(dataStr, `data-${formatDate()}.json`, 'application/json');
-    showStatus(`✅ JSON downloaded! ${extractedData.length} records`, 'success');
-}
-
-function downloadCSV() {
-    const csv = convertToCSV(extractedData);
-    downloadFile(csv, `data-${formatDate()}.csv`, 'text/csv');
-    showStatus(`✅ CSV downloaded! Ready for Excel/Google Sheets`, 'success');
-}
-
-function downloadExcel() {
-    // Simple Excel-like TSV
-    const tsv = extractedData.map(row => 
-        Object.values(row).map(v => `"${String(v).replace(/"/g, '""')}"`).join('\t')
-    ).join('\n');
-    downloadFile(tsv, `data-${formatDate()}.tsv`, 'text/tab-separated-values');
-    showStatus(`✅ Excel/TSV downloaded! Open in Excel/LibreOffice`, 'success');
-}
-
-function downloadTXT() {
-    const txt = extractedData.map((item, i) => 
-        `${i+1}. [Page ${item.page}] ${item.title}\n   URL: ${item.url}\n`
-    ).join('\n');
-    downloadFile(txt, `data-${formatDate()}.txt`, 'text/plain');
-    showStatus(`✅ Text file downloaded! Human readable`, 'success');
-}
-
-function downloadSQL() {
-    const tableName = 'extracted_data';
-    const columns = Object.keys(extractedData[0] || {}).join(', ');
-    const sql = [
-        `CREATE TABLE ${tableName} (${Object.keys(extractedData[0] || {}).map(k => `${k} TEXT`).join(', ')});`,
-        ...extractedData.map(row => 
-            `INSERT INTO ${tableName} (${columns}) VALUES (${Object.values(row).map(v => `'${String(v).replace(/'/g, "''")}'`).join(', ')});`
-        )
-    ].join('\n');
-    
-    downloadFile(sql, `data-${formatDate()}.sql`, 'text/sql');
-    showStatus(`✅ SQL dump downloaded! Import to MySQL/PostgreSQL`, 'success');
-}
-
-function copyToClipboard() {
-    const dataStr = JSON.stringify(extractedData, null, 2);
-    navigator.clipboard.writeText(dataStr).then(() => {
-        showStatus('✅ JSON copied to clipboard! Paste anywhere', 'success');
-    }).catch(() => {
-        showStatus('❌ Copy failed - use Download buttons', 'error');
-    });
-}
-
-function shareData() {
-    if (navigator.share) {
-        navigator.share({
-            title: 'Web Data Extraction Results',
-            text: `Extracted ${extractedData.length} records`,
-            url: window.location.href
-        });
-    } else {
-        copyToClipboard();
+    const tbody =        document.getElementById('dataBody').innerHTML = allData.slice(0, 1000).map((item, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td><a href="${item.url}" target="_blank" title="${item.url}">${item.url.substring(0, 50)}...</a></td>
+                <td title="${item.content}">${item.title}</td>
+                <td>${item.page}</td>
+                <td>${item.depth}</td>
+                <td>${(item.length || 0).toLocaleString()}</td>
+            </tr>
+        `).join('');
+        
+        document.getElementById('recordCount').textContent = allData.length;
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
-}
 
-function clearResults() {
-    extractedData = [];
-    document.getElementById('results').classList.remove('show');
-    showStatus('🗑️ Results cleared', 'info');
-}
+    function downloadJSON() {
+        if (allData.length === 0) {
+            showStatus('❌ No data to download', 'error');
+            return;
+        }
+        
+        const dataStr = JSON.stringify(allData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showStatus('✅ JSON downloaded!', 'success');
+    }
 
-// Utility functions
-function convertToCSV(data) {
-    if (!data.length) return '';
-    const headers = Object.keys(data[0]);
-    return [
-        headers.join(','),
-        ...data.map(row => headers.map(field => 
-            `"${String(row[field] || '').replace(/"/g, '""')}"`
-        ).join(','))
-    ].join('\n');
-}
+    function downloadCSV() {
+        if (allData.length === 0) return;
+        
+        const headers = ['URL', 'Title', 'Content', 'Page', 'Depth', 'Size', 'Selector', 'Timestamp'];
+        const csvContent = [
+            headers.join(','),
+            ...allData.map(item => [
+                `"${item.url.replace(/"/g, '""')}"`,
+                `"${item.title.replace(/"/g, '""')}"`,
+                `"${item.content.replace(/"/g, '""').substring(0, 1000)}"`,
+                item.page,
+                item.depth,
+                item.length || 0,
+                `"${item.selector.replace(/"/g, '""')}"`,
+                item.timestamp
+            ].join(','))
+        ].join('\n');
+        
+        const dataBlob = new Blob([csvContent], {type: 'text/csv'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showStatus('✅ CSV downloaded!', 'success');
+    }
 
-function downloadFile(content, filename, mimeType) {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
+    function downloadExcel() {
+        if (allData.length === 0) return;
+        
+        // Create Excel-like CSV with better formatting
+        const headers = ['URL', 'Title', 'Content Preview', 'Full Content', 'Page', 'Depth', 'Size (chars)', 'Selector', 'Timestamp'];
+        const csvContent = [
+            headers.join('\t'), // Tab-separated for Excel
+            ...allData.slice(0, 5000).map(item => [
+                item.url,
+                item.title,
+                item.content.substring(0, 100),
+                item.content,
+                item.page,
+                item.depth,
+                item.length || 0,
+                item.selector,
+                new Date(item.timestamp).toLocaleString()
+            ].join('\t'))
+        ].join('\n');
+        
+        const dataBlob = new Blob([csvContent], {type: 'text/tab-separated-values'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.tsv`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showStatus('✅ Excel/TSV downloaded!', 'success');
+    }
 
-function formatDate() {
-    return new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-}
+    function downloadTXT() {
+        if (allData.length === 0) return;
+        
+        const txtContent = allData.slice(0, 1000).map((item, i) => 
+            `=== Record ${i + 1} ===\n` +
+            `URL: ${item.url}\n` +
+            `Title: ${item.title}\n` +
+            `Content: ${item.content}\n` +
+            `Page: ${item.page} | Depth: ${item.depth} | Size: ${item.length} chars\n` +
+            `Selector: ${item.selector}\n` +
+            `${'='.repeat(50)}\n\n`
+        ).join('');
+        
+        const dataBlob = new Blob([txtContent], {type: 'text/plain'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.txt`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showStatus('✅ Text file downloaded!', 'success');
+    }
 
-// Auto-save to localStorage
-window.addEventListener('beforeunload', () => {
-    localStorage.setItem('lastExtraction', JSON.stringify(extractedData.slice(0, 100)));
-});
+    function downloadSQL() {
+        if (allData.length === 0) return;
+        
+        const tableName = 'crawl_data';
+        const sqlContent = [
+            `-- SQL dump from Link Crawler`,
+            `-- Generated: ${new Date().toISOString()}`,
+            `-- Total records: ${allData.length}`,
+            '',
+            `CREATE TABLE IF NOT EXISTS ${tableName} (`,
+            `  id INTEGER PRIMARY KEY AUTOINCREMENT,`,
+            `  url TEXT,`,
+            `  title TEXT,`,
+            `  content TEXT,`,
+            `  page_num INTEGER,`,
+            `  depth INTEGER,`,
+            `  size_chars INTEGER,`,
+            `  selector TEXT,`,
+            `  crawled_at DATETIME`,
+            `);`,
+            '',
+            `-- INSERT DATA`,
+            ...allData.slice(0, 2000).map(item => 
+                `INSERT INTO ${tableName} (url, title, content, page_num, depth, size_chars, selector, crawled_at) ` +
+                `VALUES (` +
+                `"${item.url.replace(/"/g, '""')}", ` +
+                `"${item.title.replace(/"/g, '""')}", ` +
+                `"${item.content.replace(/"/g, '""').substring(0, 4000)}", ` +
+                `${item.page}, ` +
+                `${item.depth}, ` +
+                `${item.length || 0}, ` +
+                `"${item.selector.replace(/"/g, '""')}", ` +
+                `"${item.timestamp}"` +
+                `);`
+            ),
+            ''
+        ].join('\n');
+        
+        const dataBlob = new Blob([sqlContent], {type: 'text/sql'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.sql`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showStatus('✅ SQL dump downloaded!', 'success');
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            switch(e.key) {
+                case 'Enter':
+                    if (!isCrawling) startCrawl();
+                    break;
+                case 's':
+                    e.preventDefault();
+                    downloadJSON();
+                    break;
+            }
+        }
+    });
+
+    // Auto-save to localStorage
+    window.addEventListener('beforeunload', () => {
+        if (allData.length > 0) {
+            localStorage.setItem('crawlData', JSON.stringify({
+                data: allData.slice(0, 100),
+                stats: {
+                    pages: visitedUrls.size,
+                    records: allData.length,
+                    links: foundLinks.length,
+                    depth: currentDepth
+                }
+            }));
+        }
+    });
+
+    // Load previous data on start
+    window.addEventListener('load', () => {
+        const saved = localStorage.getItem('crawlData');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                allData = data.data || [];
+                showResults();
+                updateStats();
+                showStatus(`📂 Loaded ${allData.length} previous records`, 'info');
+            } catch(e) {
+                console.log('No valid saved data');
+            }
+        }
+    });
+
 </script>
 </body>
 </html>
