@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏭 IndiaMart Manufacturer Extractor - B2B Leads & Pricing</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: #333; min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .hero { 
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            border-radius: 25px; padding: 40px; text-align: center; margin-bottom: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        h1 { 
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 3.2em; margin-bottom: 15px; font-weight: 800;
+        }
+        .tagline { font-size: 1.3em; color: #666; margin-bottom: 25px; }
+        
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 30px 0; }
+        .control-group { 
+            background: white; padding: 30px; border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 5px solid #667eea;
+        }
+        label { display: block; font-weight: 700; color: #555; margin-bottom: 12px; font-size: 1.1em; }
+        input, select, textarea { 
+            width: 100%; padding: 16px; border: 2px solid #e1e5e9; border-radius: 12px;
+            font-size: 16px; transition: all 0.3s; background: #f8f9ff;
+        }
+        input:focus, textarea:focus { 
+            border-color: #667eea; box-shadow: 0 0 0 4px rgba(102,126,234,0.2); 
+            transform: translateY(-2px);
+        }
+        
+        .btn { 
+            background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none;
+            padding: 20px 35px; border-radius: 15px; font-size: 18px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; width: 100%; 
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(102,126,234,0.5); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-export { background: linear-gradient(45deg, #00b894, #00cec9); margin-top: 15px; }
+        
+        .stats-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 20px; margin: 25px 0;
+        }
+        .stat-card { 
+            background: rgba(255,255,255,0.9); padding: 25px; border-radius: 18px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+        }
+        .stat-number { 
+            font-size: 2.8em; font-weight: 800; 
+            background: linear-gradient(45deg, #667eea, #764ba2); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+        }
+        
+        .progress { width: 100%; height: 12px; background: rgba(255,255,255,0.3); 
+            border-radius: 10px; overflow: hidden; margin: 20px 0; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2, #f093fb); 
+            width: 0%; transition: width 0.5s; box-shadow: 0 0 20px rgba(102,126,234,0.6); }
+        
+        .status { padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; 
+            font-weight: 700; font-size: 16px; }
+        .success { background: linear-gradient(135deg, #d4edda, #c3e6cb); color: #155724; }
+        .info { background: linear-gradient(135deg, #d1ecf1, #bee5eb); color: #0c5460; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 25px; 
+            background: white; border-radius: 15px; overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        th { background: linear-gradient(45deg, #667eea, #764ba2); color: white; 
+            padding: 18px 12px; font-weight: 700; }
+        td { padding: 16px 12px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f8f9ff; }
+        .manufacturer { font-weight: 700; color: #2c3e50; }
+        .price-range { background: #e8f5e8; padding: 4px 8px; border-radius: 12px; font-weight: 700; }
+        .contact { color: #667eea; font-weight: 600; }
+        .location { color: #7f8c8d; font-size: 0.9em; }
+        
+        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; margin-top: 25px; }
+        
+        @media (max-width: 768px) { 
+            .controls { grid-template-columns: 1fr; } 
+            h1 { font-size: 2.2em; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🏭 IndiaMart Manufacturer Extractor</h1>
+            <p class="tagline">10K+ manufacturers • Prices • Contacts • RFQ Ready • B2B Leads</p>
+            
+            <div class="stats-grid" id="liveStats" style="display:none;">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalManufacturers">0</div>
+                    <div>Manufacturers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalProducts">0</div>
+                    <div>Products Found</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalContacts">0</div>
+                    <div>Phone/Email</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pagesScraped">0</div>
+                    <div>Pages Scraped</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>🔍 Search Product/Category</label>
+                <input type="text" id="searchQuery" value="atta making machine" 
+                    placeholder="wheat flour machine, packaging machine, spices grinder...">
+                
+                <label>🏭 IndiaMart Category</label>
+                <select id="category">
+                    <option value="https://dir.indiamart.com/search.mp?ss=atta+making+machine">Atta Making Machine</option>
+                    <option value="https://dir.indiamart.com/search.mp?ss=packaging+machine">Packaging Machine</option>
+                    <option value="https://dir.indiamart.com/search.mp?ss=spices+grinding+machine">Spices Grinder</option>
+                    <option value="https://dir.indiamart.com/search.mp?ss=rice+mill+machine">Rice Mill Machine</option>
+                    <option value="https://dir.indiamart.com/search.mp?ss=flour+mill">Flour Mill</option>
+                </select>
+                
+                <label>📊 Max Manufacturers</label>
+                <input type="number" id="maxManufacturers" value="50" min="10" max="200">
+            </div>
+            
+            <div class="control-group">
+                <label>📈 Status</label>
+                <div id="status" class="status info">Ready to extract manufacturers...</div>
+                
+                <div class="progress" id="progress" style="display:none;">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <button class="btn" onclick="startExtraction()" id="startBtn">
+                    🚀 Extract Manufacturers Now
+                </button>
+            </div>
+        </div>
+        
+        <div class="download-grid" id="downloads" style="display:none;">
+            <button class="btn btn-export" onclick="downloadCSV()">📊 Excel Leads</button>
+            <button class="btn btn-export" onclick="downloadJSON()">📱 API Format</button>
+            <button class="btn btn-export" onclick="downloadRFQ()">📧 RFQ Template</button>
+            <button class="btn btn-export" onclick="downloadContacts()">📞 WhatsApp List</button>
+            <button class="btn btn-export" onclick="clearData()">🔄 New Search</button>
+        </div>
+        
+        <div id="results" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>🏭 Manufacturer</th>
+                        <th>📦 Products</th>
+                        <th>💰 Price Range</th>
+                        <th>📍 Location</th>
+                        <th>📞 Contact</th>
+                        <th>🌐 Website</th>
+                    </tr>
+                </thead>
+                <tbody id="manufacturersTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let manufacturerData = [];
+        let isExtracting = false;
+        
+        // IndiaMart specific selectors
+        const indiamartSelectors = {
+            manufacturers: '.company-name, .mnf-name, h3 a, [class*="company"] a, .seller-name',
+            products: '.product-name, .pr-name, [class*="product"]',
+            prices: '.price-range, [class*="price"], .rate',
+            locations: '.location, .city, .address',
+            contacts: '.contact-no, .phone, .mobile, .email',
+            websites: 'a[href*="indiamart.com"], .website',
+            nextPages: '.next, [class*="next"], a:contains("Next")'
+        };
+
+        async function startExtraction() {
+            if (isExtracting) return;
+            
+            const startUrl = document.getElementById('category').value;
+            const maxManufacturers = parseInt(document.getElementById('maxManufacturers').value);
+            
+            isExtracting = true;
+            manufacturerData = [];
+            
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('progress').style.display = 'block';
+            document.getElementById('downloads').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('liveStats').style.display = 'grid';
+            
+            showStatus('🔍 Extracting IndiaMart manufacturers...', 'info');
+            
+            try {
+                await extractIndiaMartManufacturers(startUrl, maxManufacturers);
+                displayManufacturers();
+                showStatus(`✅ Extracted ${manufacturerData.length} manufacturers! Ready for RFQ`, 'success');
+            } catch (e) {
+                showStatus(`❌ Extraction failed: ${e.message}`, 'error');
+            } finally {
+                isExtracting = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('progress').style.display = 'none';
+                document.getElementById('downloads').style.display = 'grid';
+            }
+        }
+
+        async function extractIndiaMartManufacturers(startUrl, maxManufacturers) {
+            let currentUrl = startUrl;
+            let page = 0;
+            
+            while (manufacturerData.length < maxManufacturers && page < 10) {
+                try {
+                    showStatus(`📄 Scraping page ${page + 1}...`, 'info');
+                    
+                    const manufacturers = await scrapeIndiaMartPage(currentUrl);
+                    manufacturerData.push(...manufacturers);
+                    
+                    updateProgress((manufacturerData.length / maxManufacturers) * 100);
+                    updateLiveStats();
+                    
+                    // Find next page
+                    const nextPage = await findNextPage(currentUrl);
+                    if (!nextPage || manufacturerData.length >= maxManufacturers) break;
+                    
+                    currentUrl = nextPage;
+                    page++;
+                    await new Promise(r => setTimeout(r, 1200)); // Respectful delay
+                    
+                } catch (e) {
+                    console.error('Page failed:', currentUrl);
+                    break;
+                }
+            }
+        }
+
+        async function scrapeIndiaMartPage(url) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Business Research Bot)',
+                        'Accept': 'text/html,application/xhtml+xml'
+                    }
+                });
+                
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                const manufacturers = [];
+                const companyElements = doc.querySelectorAll(indiamartSelectors.manufacturers);
+                
+                companyElements.forEach((el, index) => {
+                    if (index % 2 === 0 && index < 50) { // Every other element, limit
+                        const name = el.textContent?.trim() || `Manufacturer ${index}`;
+                        const productEl = doc.querySelectorAll(indiamartSelectors.products)[index];
+                        const priceEl = doc.querySelectorAll(indiamartSelectors.prices)[index];
+                        const locationEl = doc.querySelectorAll(indiamartSelectors.locations)[index];
+                        
+                        manufacturers.push({
+                            name: name.substring(0, 80),
+                            products: productEl?.textContent?.trim().substring(0, 60) || 'Multiple products',
+                            priceRange: priceEl?.textContent?.trim() || 'Contact for price',
+                            location: locationEl?.textContent?.trim().substring(0, 30) || 'India',
+                            profileUrl: el.href || url,
+                            contact: 'Call Now', // IndiaMart hides actual numbers
+                            website: '',
+                            category: document.getElementById('searchQuery').value,
+                            scrapedAt: new Date().toISOString()
+                        });
+                    }
+                });
+                
+                return manufacturers;
+            } catch (e) {
+                console.error('Scrape failed:', e);
+                return [];
+            }
+        }
+
+        async function findNextPage(url) {
+            try {
+                const response = await fetch(url);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                const nextLink = doc.querySelector('a.next, .next, [class*="next"]');
+                return nextLink?.href || null;
+            } catch {
+                return null;
+            }
+        }
+
+        function displayManufacturers() {
+            const tbody = document.getElementById('manufacturersTable');
+            tbody.innerHTML = manufacturerData.slice(0, 100).map((mfg, i) => `
+                <tr>
+                    <td>${i+1}</td>
+                    <td class="manufacturer">${mfg.name}</td>
+                    <td>${mfg.products}</td>
+                    <td><span class="price-range">${mfg.priceRange}</span></td>
+                    <td class="location">${mfg.location}</td>
+                    <td><a href="${mfg.profileUrl}" target="_blank" class="contact">📞 Contact</a></td>
+                    <td><a href="${mfg.profileUrl}" target="_blank">🌐 Profile</a></td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = Math.min(100, percent) + '%';
+        }
+
+        function updateLiveStats() {
+            document.getElementById('totalManufacturers').textContent = manufacturerData.length;
+            document.getElementById('totalProducts').textContent = manufacturerData.reduce((sum, m) => sum + 1, 0);
+            document.getElementById('totalContacts').textContent = manufacturerData.length;
+            document.getElementById('pagesScraped').textContent = Math.ceil(manufacturerData.length / 10);
+        }
+
+        function showStatus(msg, type) {
+            document.getElementById('status').textContent = msg;
+            document.getElementById('status').className = `status ${type}`;
+        }
+
+        // Export Functions
+        function downloadCSV() {
+            if (!manufacturerData.length) return alert('No data to export');
+            
+            const csv = [
+                ['#','Manufacturer','Products','Price Range','Location','Profile URL','Category','Scraped Date'],
+                ...manufacturerData.map((m, i) => [
+                    i+1, m.name, m.products, m.priceRange, m.location, 
+                    m.profileUrl, m.category, new Date(m.scrapedAt).toLocaleDateString()
+                ])
+            ].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+            
+            downloadFile(csv, 'indiamart-man
