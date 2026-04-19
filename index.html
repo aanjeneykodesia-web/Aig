@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clawer - Claw Machine Game</title>
+    <title>WebClawer - Website Data Extractor</title>
     <style>
         * {
             margin: 0;
@@ -12,454 +12,528 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff88;
             height: 100vh;
             overflow: hidden;
-            position: relative;
         }
 
-        .game-container {
-            position: relative;
-            width: 100vw;
+        .container {
+            display: grid;
+            grid-template-columns: 350px 1fr 400px;
+            grid-template-rows: 60px 1fr;
             height: 100vh;
+            gap: 1px;
+            background: #1a1a1a;
         }
 
-        /* Claw Machine */
-        .claw-machine {
-            position: absolute;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 400px;
-            height: 500px;
-            background: linear-gradient(145deg, #2c3e50, #34495e);
-            border: 8px solid #1a252f;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        /* Control Panel */
+        .control-panel {
+            grid-column: 1;
+            grid-row: 1 / -1;
+            background: #111;
+            border-right: 1px solid #333;
+            padding: 20px;
+            overflow-y: auto;
         }
 
-        .machine-top {
-            height: 80px;
-            background: linear-gradient(145deg, #34495e, #2c3e50);
-            border-radius: 12px 12px 0 0;
-            position: relative;
-            border-bottom: 4px solid #1a252f;
-        }
-
-        .controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-        }
-
-        .control-btn {
-            padding: 15px 25px;
-            font-size: 16px;
+        .panel-header {
+            font-size: 18px;
             font-weight: bold;
+            margin-bottom: 20px;
+            color: #00ff88;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #00ff88;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(145deg, #00ff88, #00cc6a);
             border: none;
-            border-radius: 25px;
+            border-radius: 4px;
+            color: #000;
+            font-weight: bold;
+            font-family: inherit;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            margin-bottom: 10px;
         }
 
-        .move-btn {
-            background: linear-gradient(145deg, #f39c12, #e67e22);
-            color: white;
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0,255,136,0.4);
         }
 
-        .grab-btn {
-            background: linear-gradient(145deg, #e74c3c, #c0392b);
-            color: white;
+        .btn.danger {
+            background: linear-gradient(145deg, #ff4757, #ff3742);
         }
 
-        .control-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+        /* Navigation Tree */
+        .nav-tree {
+            margin-top: 20px;
         }
 
-        .control-btn:active {
-            transform: translateY(0);
+        .nav-item {
+            padding: 8px 12px;
+            background: rgba(0,255,136,0.1);
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
         }
 
-        /* Claw Mechanism */
-        .claw-arm {
+        .nav-item:hover, .nav-item.active {
+            background: rgba(0,255,136,0.2);
+            border-left-color: #00ff88;
+        }
+
+        /* Preview */
+        .preview {
+            grid-column: 2;
+            grid-row: 1 / -1;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .preview-overlay {
             position: absolute;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 300px;
-            background: linear-gradient(to bottom, #bdc3c7, #95a5a6);
-            z-index: 10;
-        }
-
-        .claw-head {
-            position: absolute;
-            top: 370px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, #f1c40f, #f39c12);
-            border-radius: 50%;
-            border: 4px solid #d68910;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            flex-direction: column;
+            color: #00ff88;
+            font-size: 18px;
+            z-index: 10;
         }
 
-        .claw-open {
-            width: 80px;
-            height: 80px;
+        /* Data Panel */
+        .data-panel {
+            grid-column: 3;
+            grid-row: 1 / -1;
+            background: #111;
+            border-left: 1px solid #333;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
-        .claw-grip {
-            position: absolute;
-            width: 20px;
-            height: 40px;
-            background: #e74c3c;
-            border-radius: 10px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        .data-header {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #00ff88;
         }
 
-        .claw-grip.left {
-            left: 5px;
-            transform-origin: top center;
+        .data-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .claw-grip.right {
-            right: 5px;
-            transform-origin: top center;
+        .stat-item {
+            background: rgba(0,255,136,0.1);
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
         }
 
-        /* Prizes */
-        .prize-area {
-            position: absolute;
-            top: 90px;
-            left: 20px;
-            width: 360px;
-            height: 380px;
-            overflow: hidden;
-            border-radius: 10px;
-            background: linear-gradient(145deg, #ecf0f1, #bdc3c7);
+        .data-list {
+            flex: 1;
+            overflow-y: auto;
         }
 
-        .prize {
-            position: absolute;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            animation: float 3s ease-in-out infinite;
+        .data-item {
+            background: rgba(0,255,136,0.05);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #00ff88;
+            animation: slideIn 0.3s ease-out;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
         }
 
-        .prize:hover {
-            transform: scale(1.1);
-            z-index: 5;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .prize.captured {
-            opacity: 0;
-            transform: scale(0);
+        .json-viewer {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            color: #aaa;
         }
 
-        /* Prize styles */
-        .teddy { 
-            width: 50px; height: 50px; 
-            background: radial-gradient(circle at 30% 30%, #e91e63, #ad1457);
-            border-radius: 50% 40% 50% 40%;
-            top: 50px; left: 50px;
-        }
-
-        .ball { 
-            width: 45px; height: 45px; 
-            background: radial-gradient(circle, #ff6b6b, #ee5a24);
-            border-radius: 50%;
-            top: 100px; left: 250px;
-        }
-
-        .candy { 
-            width: 40px; height: 60px; 
-            background: linear-gradient(45deg, #ff9ff3, #f368e0);
-            border-radius: 20px 20px 5px 5px;
-            top: 200px; left: 80px;
-        }
-
-        .ring { 
-            width: 55px; height: 55px; 
-            border: 8px solid #00d2d3;
-            border-radius: 50%;
-            border-top: none;
-            top: 150px; left: 280px;
-        }
-
-        /* Floating animation */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        /* Score */
-        .score {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* Particles */
-        .particle {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #f1c40f;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: particle-float 1s ease-out forwards;
-        }
-
-        @keyframes particle-float {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-50px) scale(0);
-            }
-        }
-
-        /* Moving between pages effect */
-        .page-transition {
+        .status-bar {
             position: fixed;
-            top: 0;
+            bottom: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle, transparent, rgba(0,0,0,0.8));
-            pointer-events: none;
-            opacity: 0;
-            z-index: 1000;
-            transition: opacity 0.5s ease;
+            right: 0;
+            height: 25px;
+            background: #000;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            padding: 0 20px;
+            z-index: 100;
         }
 
-        .page-transition.active {
-            opacity: 1;
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #ff4757;
         }
+
+        .status-indicator.crawling { background: #ffa502; }
+        .status-indicator.success { background: #2ed573; }
+        .status-indicator.error { background: #ff4757; }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="score">Score: <span id="score">0</span></div>
-        
-        <div class="claw-machine">
-            <div class="machine-top"></div>
-            <div class="claw-arm" id="clawArm"></div>
-            <div class="claw-head" id="clawHead">
-                <div class="claw-grip left" id="leftGrip"></div>
-                <div class="claw-grip right" id="rightGrip"></div>
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="panel-header">🔍 WebClawer</div>
+            
+            <div class="input-group">
+                <label>Start URL</label>
+                <input type="url" id="startUrl" value="https://example.com" placeholder="https://example.com">
             </div>
-            <div class="prize-area">
-                <div class="prize teddy" data-value="100"></div>
-                <div class="prize ball" data-value="50"></div>
-                <div class="prize candy" data-value="75"></div>
-                <div class="prize ring" data-value="80"></div>
+
+            <div class="input-group">
+                <label>Max Depth</label>
+                <select id="maxDepth">
+                    <option value="1">1 Level</option>
+                    <option value="2" selected>2 Levels</option>
+                    <option value="3">3 Levels</option>
+                    <option value="5">5 Levels</option>
+                </select>
             </div>
+
+            <div class="input-group">
+                <label>Extract</label>
+                <select id="extractType" multiple size="4">
+                    <option value="title" selected>Page Title</option>
+                    <option value="links" selected>All Links</option>
+                    <option value="emails" selected>Email Addresses</option>
+                    <option value="phones" selected>Phone Numbers</option>
+                    <option value="forms">Forms</option>
+                    <option value="images">Images</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="clawer.startCrawling()">🚀 Start Crawling</button>
+            <button class="btn" onclick="clawer.stopCrawling()">⏹️ Stop</button>
+            <button class="btn danger" onclick="clawer.clearAll()">🗑️ Clear All</button>
+
+            <div class="nav-tree" id="navTree"></div>
         </div>
 
-        <div class="controls">
-            <button class="control-btn move-btn" onclick="moveClaw('left')">← Move Left</button>
-            <button class="control-btn move-btn" onclick="moveClaw('right')">→ Move Right</button>
-            <button class="control-btn grab-btn" onclick="grabPrize()">🕷️ GRAB</button>
+        <!-- Preview -->
+        <div class="preview">
+            <div class="preview-overlay" id="previewOverlay">
+                <div>🎯 Target Website Preview</div>
+                <div style="font-size: 14px; margin-top: 10px; color: #aaa;">
+                    Claw will navigate here automatically
+                </div>
+            </div>
+            <iframe id="previewFrame" style="display: none;"></iframe>
         </div>
 
-        <div class="page-transition" id="pageTransition"></div>
+        <!-- Data Panel -->
+        <div class="data-panel">
+            <div class="data-header">📊 Extracted Data</div>
+            <div class="data-stats">
+                <div class="stat-item">
+                    <div style="font-size: 20px; font-weight: bold;" id="totalPages">0</div>
+                    <div>Pages</div>
+                </div>
+                <div class="stat-item">
+                    <div style="font-size: 20px; font-weight: bold;" id="totalData">0</div>
+                    <div>Records</div>
+                </div>
+            </div>
+            <div class="data-list" id="dataList"></div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <div class="status-indicator" id="statusIndicator"></div>
+        <span id="statusText">Ready</span>
+        <span style="margin-left: auto;" id="currentUrl"></span>
     </div>
 
     <script>
-        class ClawerGame {
+        class WebClawer {
             constructor() {
-                this.clawX = 50; // Starting position (0-100%)
-                this.clawY = 370;
-                this.score = 0;
-                this.isGrabbing = false;
-                this.grabbedPrize = null;
+                this.isCrawling = false;
+                this.visitedUrls = new Set();
+                this.extractedData = [];
+                this.navigationHistory = [];
+                this.maxDepth = 2;
+                this.currentDepth = 0;
                 this.init();
             }
 
             init() {
-                this.clawHead = document.getElementById('clawHead');
-                this.clawArm = document.getElementById('clawArm');
-                this.leftGrip = document.getElementById('leftGrip');
-                this.rightGrip = document.getElementById('rightGrip');
-                this.scoreEl = document.getElementById('score');
-                this.prizes = document.querySelectorAll('.prize');
-                this.updateScore();
-                this.attachPrizeEvents();
+                this.bindEvents();
+                this.updateStatus('Ready', 'idle');
             }
 
-            moveClaw(direction) {
-                if (this.isGrabbing) return;
-
-                const step = 10;
-                if (direction === 'left' && this.clawX > 0) {
-                    this.clawX = Math.max(0, this.clawX - step);
-                } else if (direction === 'right' && this.clawX < 100) {
-                    this.clawX = Math.min(100, this.clawX + step);
-                }
-
-                this.updateClawPosition();
-            }
-
-            updateClawPosition() {
-                const machineRect = document.querySelector('.claw-machine').getBoundingClientRect();
-                const xPos = machineRect.left + (machineRect.width * (this.clawX / 100));
-                
-                this.clawArm.style.left = `${xPos - machineRect.left}px`;
-                this.clawHead.style.left = `${xPos - machineRect.left}px`;
-            }
-
-            grabPrize() {
-                if (this.isGrabbing) return;
-
-                this.isGrabbing = true;
-                this.clawHead.classList.add('claw-open');
-
-                // Check for prize collision
-                const clawRect = this.clawHead.getBoundingClientRect();
-                let caughtPrize = null;
-
-                this.prizes.forEach(prize => {
-                    if (prize.classList.contains('captured')) return;
-                    
-                    const prizeRect = prize.getBoundingClientRect();
-                    if (this.isColliding(clawRect, prizeRect)) {
-                        caughtPrize = prize;
-                    }
+            bindEvents() {
+                document.getElementById('startUrl').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.startCrawling();
                 });
-
-                if (caughtPrize) {
-                    this.grabbedPrize = caughtPrize;
-                    caughtPrize.classList.add('captured');
-                    this.createParticles(clawRect);
-                }
-
-                // Animate grab
-                setTimeout(() => {
-                    this.clawHead.classList.remove('claw-open');
-                    this.liftPrize();
-                }, 500);
             }
 
-            isColliding(rect1, rect2) {
-                return !(rect1.right < rect2.left || 
-                        rect1.left > rect2.right || 
-                        rect1.bottom < rect2.top || 
-                        rect1.top > rect2.bottom);
-            }
+            async startCrawling() {
+                if (this.isCrawling) return;
 
-            liftPrize() {
-                if (!this.grabbedPrize) {
-                    this.isGrabbing = false;
+                const startUrl = document.getElementById('startUrl').value.trim();
+                if (!startUrl) {
+                    this.showError('Enter a valid URL');
                     return;
                 }
 
-                // Lift claw
-                this.clawY = 100;
-                this.updateClawPosition();
+                this.isCrawling = true;
+                this.maxDepth = parseInt(document.getElementById('maxDepth').value);
+                this.visitedUrls.clear();
+                this.extractedData = [];
+                this.navigationHistory = [];
+                this.currentDepth = 0;
 
-                setTimeout(() => {
-                    if (this.grabbedPrize) {
-                        this.score += parseInt(this.grabbedPrize.dataset.value);
-                        this.updateScore();
-                        this.triggerPageTransition();
+                this.updateStatus('Starting crawl...', 'crawling');
+                await this.crawl(startUrl, 0);
+                this.isCrawling = false;
+                this.updateStatus('Crawl completed', 'success');
+            }
+
+            async crawl(url, depth) {
+                if (depth > this.maxDepth || this.visitedUrls.has(url)) return;
+                
+                this.visitedUrls.add(url);
+                this.navigationHistory.push({ url, depth });
+                this.updateNavTree();
+                this.previewPage(url);
+
+                try {
+                    const data = await this.extractFromUrl(url);
+                    if (data) {
+                        this.extractedData.push({
+                            url,
+                            depth,
+                            timestamp: new Date().toISOString(),
+                            ...data
+                        });
+                        this.renderData();
                     }
-                    this.resetClaw();
-                }, 1000);
-            }
 
-            resetClaw() {
-                this.clawY = 370;
-                this.clawX = 50;
-                this.grabbedPrize = null;
-                this.isGrabbing = false;
-                this.updateClawPosition();
-            }
-
-            updateScore() {
-                this.scoreEl.textContent = this.score;
-            }
-
-            createParticles(rect) {
-                for (let i = 0; i < 8; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.style.left = `${rect.left + Math.random() * rect.width}px`;
-                    particle.style.top = `${rect.bottom}px`;
-                    document.body.appendChild(particle);
-
-                    setTimeout(() => particle.remove(), 1000);
+                    // Find and crawl links
+                    if (depth < this.maxDepth) {
+                        const links = data?.links || [];
+                        for (const link of links.slice(0, 5)) { // Limit to 5 links per page
+                            if (this.isSameDomain(link, new URL(url).origin)) {
+                                await this.crawl(link, depth + 1);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Crawl error:', error);
                 }
             }
 
-            triggerPageTransition() {
-                const transition = document.getElementById('pageTransition');
-                transition.classList.add('active');
+            previewPage(url) {
+                const frame = document.getElementById('previewFrame');
+                const overlay = document.getElementById('previewOverlay');
                 
-                setTimeout(() => {
-                    transition.classList.remove('active');
-                }, 1500);
+                frame.src = url;
+                frame.onload = () => {
+                    overlay.style.display = 'none';
+                    frame.style.display = 'block';
+                    document.getElementById('currentUrl').textContent = url;
+                };
             }
 
-            attachPrizeEvents() {
-                this.prizes.forEach(prize => {
-                    prize.addEventListener('click', (e) => {
-                        this.moveClawToPrize(prize);
-                    });
-                });
+            async extractFromUrl(url) {
+                try {
+                    // Simulate API extraction (in real implementation, use server-side scraping)
+                    const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+                    const data = await response.json();
+                    const html = data.contents;
+
+                    return {
+                        title: this.extractTitle(html),
+                        links: this.extractLinks(html, url),
+                        emails: this.extractEmails(html),
+                        phones: this.extractPhones(html),
+                        forms: this.extractForms(html)
+                    };
+                } catch (error) {
+                    return null;
+                }
             }
 
-            moveClawToPrize(prize) {
-                const prizeRect = prize.getBoundingClientRect();
-                const machineRect = document.querySelector('.claw-machine').getBoundingClientRect();
-                const targetX = ((prizeRect.left + prizeRect.width / 2 - machineRect.left) / machineRect.width) * 100;
-                
-                this.clawX = targetX;
-                this.updateClawPosition();
+            extractTitle(html) {
+                const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+                return match ? match[1].trim() : 'No title';
+            }
+
+            extractLinks(html, baseUrl) {
+                const links = [];
+                const urlRegex = /href=["']([^"']+)["']/gi;
+                let match;
+                while ((match = urlRegex.exec(html)) !== null) {
+                    let link = match[1];
+                    if (link.startsWith('http') || link.startsWith('//')) {
+                        links.push(link);
+                    } else if (link.startsWith('/')) {
+                        const base = new URL(baseUrl);
+                        links.push(base.origin + link);
+                    }
+                }
+                return [...new Set(links.slice(0, 20))]; // Limit to 20 unique links
+            }
+
+            extractEmails(html) {
+                const emailRegex = /[\w\.-]+@[\w\.-]+\.\w+/gi;
+                const emails = html.match(emailRegex) || [];
+                return [...new Set(emails)];
+            }
+
+            extractPhones(html) {
+                const phoneRegex = /(\+?[\d\s\-\$\$]{10,15})/g;
+                const phones = html.match(phoneRegex) || [];
+                return [...new Set(phones)];
+            }
+
+            extractForms(html) {
+                const formCount = (html.match(/<form/gi) || []).length;
+                return formCount;
+            }
+
+            isSameDomain(url, origin) {
+                try {
+                    return new URL(url).origin === origin;
+                } catch {
+                    return false;
+                }
+            }
+
+            updateNavTree() {
+                const tree = document.getElementById('navTree');
+                tree.innerHTML = this.navigationHistory.map((item, index) => `
+                    <div class="nav-item ${index === this.navigationHistory.length - 1 ? 'active' : ''}"
+                         onclick="clawer.previewPage('${item.url}')">
+                        📄 ${item.url.replace(/^https?:\/\//, '')}<br>
+                        <small style="color: #666;">Depth: ${item.depth}</small>
+                    </div>
+                `).join('');
+            }
+
+            renderData() {
+                document.getElementById('totalPages').textContent = this.visitedUrls.size;
+                document.getElementById('totalData').textContent = this.extractedData.length;
+
+                const list = document.getElementById('dataList');
+                list.innerHTML = this.extractedData.slice(-50).map(item => `
+                    <div class="data-item">
+                        <div><strong>${item.url.replace(/^https?:\/\//, '')}</strong> 
+                            <span style="color: #aaa;">(Depth: ${item.depth})</span></div>
+                        ${item.title ? `<div>📄 ${item.title}</div>` : ''}
+                        ${item.emails?.length ? `<div>✉️ ${item.emails.length} emails</div>` : ''}
+                        ${item.phones?.length ? `<div>📞 ${item.phones.length} phones</div>` : ''}
+                        ${item.links?.length ? `<div>🔗 ${item.links.length} links</div>` : ''}
+                        ${item.forms ? `<div>📝 ${item.forms} forms</div>` : ''}
+                        <div class="json-viewer">${JSON.stringify(item, null, 2).slice(0, 200)}...</div>
+                    </div>
+                `).join('') || '<div style="color: #666; text-align: center; padding: 40px;">No data extracted</div>';
+            }
+
+            updateStatus(text, state) {
+                document.getElementById('statusText').textContent = text;
+                const indicator = document.getElementById('statusIndicator');
+                indicator.className = `status-indicator ${state}`;
+            }
+
+            showError(message) {
+                this.updateStatus(message, 'error');
+                setTimeout(() => this.updateStatus('Ready', 'idle'), 3000);
+            }
+
+            stopCrawling() {
+                this.isCrawling = false;
+                this.updateStatus('Stopped', 'idle');
+            }
+
+            clearAll() {
+                this.extractedData = [];
+                this.visitedUrls.clear();
+                this.navigationHistory = [];
+                document.getElementById('previewOverlay').style.display = 'flex';
+                document.getElementById('previewFrame').style.display = 'none';
+                this.renderData();
+                this.updateNavTree();
+                this.updateStatus('Cleared', 'idle');
             }
         }
 
-        // Initialize game
-        const game = new ClawerGame();
+        // Initialize
+        const clawer = new WebClawer();
 
-        // Keyboard controls
-        document.addEventListener('keydown', (e) => {
-            switch(e.key) {
-                case 'ArrowLeft':
-                    game.moveClaw('left');
-                    break;
-                case 'ArrowRight':
-                    game.moveClaw('right');
-                    break;
-                case ' ':
-                    e.preventDefault();
-                    game.grabPrize();
-                    break;
-            }
+        // Auto-scroll data panel
+        const dataList = document.getElementById('dataList');
+        const observer = new MutationObserver(() => {
+            dataList.scrollTop = dataList.scrollHeight;
         });
-
-        // Responsive
-        window.addEventListener('resize', () => {
-            game.updateClawPosition();
-        });
+        observer.observe(dataList, { childList: true });
     </script>
 </body>
 </html>
