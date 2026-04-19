@@ -3,306 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Data Extractor</title>
+    <title>IndiaMart Data Extractor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.1); }
+        .gradient-bg { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); }
+        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.12); }
     </style>
 </head>
 <body class="gradient-bg min-h-screen py-12 px-4">
-    <div class="max-w-4xl mx-auto">
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-3 bg-white/20 backdrop-blur-lg px-8 py-4 rounded-full mb-6 shadow-2xl">
-                <i class="fas fa-globe text-3xl text-cyan-400"></i>
-                <h1 class="text-4xl md:text-5xl font-bold text-white">URL Data Extractor</h1>
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-3 bg-white/20 backdrop-blur-lg px-8 py-4 rounded-full mb-8 shadow-2xl">
+                <i class="fas fa-search-dollar text-3xl text-yellow-400"></i>
+                <h1 class="text-4xl md:text-5xl font-bold text-white">IndiaMart Extractor</h1>
             </div>
-            <p class="text-xl text-white/90 max-w-2xl mx-auto">
-                Enter ANY URL → Extract emails, phones, addresses instantly ✅ Works on ALL sites
+            <p class="text-xl text-white/90 max-w-3xl mx-auto">
+                Extract supplier contacts from IndiaMart search results ✅ Phones, Emails, WhatsApp
             </p>
         </div>
 
-        <!-- Main Interface -->
-        <div class="grid lg:grid-cols-2 gap-8">
+        <div class="grid lg:grid-cols-2 gap-10">
             <!-- URL Input -->
-            <div class="glass rounded-3xl p-8 border border-white/20 shadow-2xl">
-                <div class="flex items-center gap-3 mb-8">
-                    <i class="fas fa-link text-2xl text-cyan-400"></i>
-                    <h2 class="text-2xl font-bold text-white">🌐 Enter Website URL</h2>
+            <div class="glass rounded-3xl p-10 border border-white/20 shadow-2xl">
+                <div class="flex items-center gap-4 mb-10">
+                    <i class="fas fa-link text-3xl text-emerald-400"></i>
+                    <h2 class="text-3xl font-bold text-white">IndiaMart URL</h2>
                 </div>
                 
-                <div class="space-y-4">
+                <div class="space-y-6">
                     <div class="relative">
-                        <input 
-                            id="urlInput" 
-                            type="url" 
-                            placeholder="https://example.com"
-                            class="w-full p-5 pl-12 pr-20 rounded-2xl bg-white/10 text-white placeholder-white/70 
-                                   border-2 border-white/20 focus:border-cyan-400 focus:outline-none focus:ring-4 
-                                   ring-cyan-400/30 text-lg font-mono"
-                        >
-                        <i class="fas fa-globe absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 text-xl"></i>
-                        <button onclick="extractFromUrl()" 
-                                class="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-cyan-500 to-blue-600 
-                                       hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-bold 
-                                       shadow-lg hover:shadow-xl transition-all">
-                            <i class="fas fa-bolt mr-1"></i>Extract
+                        <input id="urlInput" type="url" 
+                               placeholder="https://m.indiamart.com/isearch.php?s=rice..."
+                               class="w-full p-6 pl-14 pr-24 rounded-3xl bg-white/10 text-white placeholder-white/70 
+                                      border-2 border-white/20 focus:border-emerald-400 focus:outline-none 
+                                      focus:ring-4 ring-emerald-400/30 text-lg font-mono tracking-wide"
+                               value="https://m.indiamart.com/isearch.php?s=rice&cq_src=all-india_pos_11&crs=cs-all&no_sugg=1&tags=res:RC5|ktp:N0|mtp:SP|wc:1|lcf:-1|qr_nm:gd|cs:16136|com-cf:nl|ptrs:na|mc:105901|cat:171|qry_typ:P|lang:en|qrd:260417|mrd:260401|prdt:260419|msf:ls|pfen:1|gli:U1G1I1|gc:lucknow|ic:Lucknow|guc:Lucknow|emt:10">
+                        <i class="fas fa-globe absolute left-5 top-1/2 -translate-y-1/2 text-emerald-400 text-2xl"></i>
+                        <button onclick="extractIndiaMart()" 
+                                class="absolute right-3 top-1/2 -translate-y-1/2 bg-gradient-to-r from-emerald-500 to-teal-600 
+                                       hover:from-emerald-600 hover:to-teal-700 text-white px-8 py-4 rounded-2xl 
+                                       font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300
+                                       flex items-center gap-2">
+                            <i class="fas fa-bolt"></i> Extract Contacts
                         </button>
                     </div>
                     
-                    <div class="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/40 p-4 rounded-2xl">
-                        <div class="flex items-center gap-2 mb-2 text-yellow-100 font-semibold">
-                            <i class="fas fa-lightbulb text-yellow-400"></i>
-                            Works on: Twitter, LinkedIn, Facebook, Gmail, PDFs, any site!
+                    <div class="grid grid-cols-2 gap-4 text-center p-6 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 
+                                border border-yellow-400/40 rounded-3xl">
+                        <div class="text-yellow-100">
+                            <div class="text-2xl font-bold text-yellow-400">📱 Phones</div>
+                            <div class="text-sm">+91 numbers</div>
                         </div>
-                        <div class="text-sm text-yellow-100 grid grid-cols-3 gap-2 text-xs">
-                            <span>✅ Social profiles</span>
-                            <span>✅ Contact pages</span>
-                            <span>✅ Email signatures</span>
+                        <div class="text-yellow-100">
+                            <div class="text-2xl font-bold text-yellow-400">✉️ WhatsApp</div>
+                            <div class="text-sm">WA links</div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Manual Input Fallback -->
-                <div class="mt-8 pt-8 border-t border-white/20">
-                    <div class="flex items-center gap-2 text-white/70 mb-4">
-                        <i class="fas fa-keyboard text-sm"></i>
-                        <span class="text-sm">Or paste text manually:</span>
-                    </div>
-                    <textarea id="manualText" rows="4" 
-                              placeholder="Paste text here if URL fails..."
-                              class="w-full p-4 rounded-xl bg-white/5 text-white placeholder-white/50 border border-white/20 focus:outline-none"></textarea>
                 </div>
             </div>
 
             <!-- Results -->
-            <div class="glass rounded-3xl p-8 border border-white/20 shadow-2xl">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-list text-2xl text-emerald-400"></i>
-                        <h2 class="text-2xl font-bold text-white">📊 Extracted Data</h2>
+            <div class="glass rounded-3xl p-10 border border-white/20 shadow-2xl">
+                <div class="flex items-center justify-between mb-10 pb-6 border-b border-white/20">
+                    <div class="flex items-center gap-4">
+                        <i class="fas fa-phone text-3xl text-emerald-400"></i>
+                        <h2 class="text-3xl font-bold text-white">📞 Contacts Found</h2>
                     </div>
-                    <div class="flex gap-2 p-2 bg-white/10 rounded-xl">
-                        <button onclick="copyAll()" title="Copy All" class="p-3 hover:bg-white/20 rounded-lg transition-all">
-                            <i class="fas fa-copy text-white"></i>
+                    <div class="flex gap-3 p-3 bg-white/10 backdrop-blur rounded-2xl">
+                        <button onclick="copyAllContacts()" class="p-4 hover:bg-white/20 rounded-xl transition-all flex items-center gap-2">
+                            <i class="fas fa-copy"></i> Copy All
                         </button>
-                        <button onclick="downloadResults()" title="Download TXT" class="p-3 hover:bg-white/20 rounded-lg transition-all">
-                            <i class="fas fa-download text-white"></i>
-                        </button>
-                        <button onclick="clearResults()" title="Clear" class="p-3 hover:bg-white/20 rounded-lg transition-all">
-                            <i class="fas fa-times text-white"></i>
+                        <button onclick="downloadContacts()" class="p-4 hover:bg-white/20 rounded-xl transition-all flex items-center gap-2">
+                            <i class="fas fa-download"></i> Download
                         </button>
                     </div>
                 </div>
                 
-                <div id="status" class="text-center py-12 text-white/50 mb-6">
-                    <i class="fas fa-mouse-pointer text-4xl mb-4 opacity-50"></i>
-                    <div class="font-medium">Enter URL → Click Extract</div>
-                    <div class="text-sm mt-2 opacity-75">Extracts emails, phones, addresses, social links</div>
+                <div id="loading" class="hidden flex flex-col items-center justify-center py-20 text-white/70">
+                    <div class="w-20 h-20 border-4 border-white/20 border-t-emerald-400 rounded-full animate-spin mb-6"></div>
+                    <div class="text-xl font-semibold">Fetching IndiaMart page...</div>
+                    <div class="text-sm mt-2">This takes 3-5 seconds</div>
                 </div>
                 
-                <div id="results" class="space-y-4 hidden"></div>
+                <div id="results" class="space-y-6 hidden">
+                    <!-- Results will appear here -->
+                </div>
+                
+                <div id="emptyState" class="text-center py-20 text-white/50">
+                    <i class="fas fa-inbox text-6xl mb-8 opacity-50"></i>
+                    <div class="text-2xl font-semibold mb-4">Enter IndiaMart URL above</div>
+                    <div class="text-lg">Extracts phones, WhatsApp, emails from search results</div>
+                </div>
             </div>
-        </div>
-
-        <!-- Toast -->
-        <div id="toast" class="fixed top-6 right-6 bg-emerald-500 text-white px-6 py-4 rounded-2xl shadow-2xl 
-                             hidden flex items-center gap-3 font-semibold z-50 backdrop-blur-sm">
-            <i class="fas fa-check"></i> <span id="toastMsg">Ready!</span>
         </div>
     </div>
 
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-8 py-4 rounded-2xl shadow-2xl 
+                         hidden flex items-center gap-3 font-semibold text-lg z-50 backdrop-blur-lg border border-emerald-400">
+        <i class="fas fa-check-circle"></i> <span id="toastText">Ready!</span>
+    </div>
+
     <script>
-        // CORS Proxy for URL fetching (works everywhere)
-        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+        // Multiple CORS proxies for reliability
+        const PROXIES = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://thingproxy.freeboard.io/fetch/'
+        ];
         
-        // Super accurate extraction patterns
-        const extractors = {
+        // IndiaMart specific patterns
+        const indiaMartPatterns = {
+            phones: [
+                /(\+91|91|0)?[6-9]\d{9}/g,
+                /[\s\-](\d{10})[\s\-]/g,
+                /(\d{4,5}[-]\d{6})/g
+            ],
+            whatsapp: [
+                /(?:whatsapp|wa|chat)\.?(?:com)?\/(?:send|message)?\/?\??phone?=?(?:\+91)?(?:91)?([6-9]\d{9})/gi,
+                /wa\.me\/([6-9]\d{9})/gi,
+                /whatsapp:([6-9]\d{9})/gi
+            ],
             emails: /(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b)/gi,
-            phones: /(\+?1[-.\s]?)?\$?([0-9]{3})\$?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4}|\d{3})/gi,
-            urls: /(https?:\/\/[^\s<>"{}|\\^`\$\$]+)/gi,
-            twitter: /@([A-Za-z0-9_]{1,15})/gi,
-            linkedin: /(?:linkedin\.com\/in\/|www\.linkedin\.com\/in\/)([A-Za-z0-9\-]+)/gi,
-            addresses: /\d{1,5}\s\w+\s(?:St|Rd|Ave|Blvd|Dr|Dr\.|Dr|Street|Road|Avenue|Boulevard|Drive|Lane|Court|Pl|Place|Square|Row|Rise|Rise|Peak|Path|Park|Oval|Lane|Mews|Lane|Gardens|Gardens|Green|Grove|Grange|Glen|Gate|Gardens|Fields|Field|Farm|Close|Circle|Circle|Chase|Chase|Center|Center|Centre|Center|Bay|Bank|Avenue|Ave|Approach|Alley|Acton|Abbey)\.?/gi
+            suppliers: /(?:Supplier|Manufacturer|Exporter|Wholesaler|Trader)[:\s]+([A-Za-z\s&.,]+)/gi
         };
 
-        async function extractFromUrl() {
+        async function extractIndiaMart() {
             const url = document.getElementById('urlInput').value.trim();
-            if (!url) return showToast('Enter a URL first!', 'error');
-
-            showLoading('Fetching webpage...');
-            
-            try {
-                // Fetch via CORS proxy
-                const proxyUrl = CORS_PROXY + encodeURIComponent(url);
-                const response = await fetch(proxyUrl, { 
-                    method: 'GET',
-                    headers: { 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
-                });
-                
-                if (!response.ok) throw new Error('Failed to fetch');
-                
-                const html = await response.text();
-                const text = extractTextFromHTML(html);
-                
-                // Update manual input too
-                document.getElementById('manualText').value = text.slice(0, 5000);
-                
-                showToast(`Extracted ${text.length} chars from ${new URL(url).hostname}`, 'success');
-                extractData(text);
-                
-            } catch (error) {
-                showToast('URL failed - paste text manually', 'warning');
-                document.getElementById('status').innerHTML = `
-                    <div class="text-orange-400">
-                        <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                        <div>Could not fetch ${url}</div>
-                        <div class="text-sm mt-2 text-white/70">Paste content manually below ↓</div>
-                    </div>
-                `;
+            if (!url.includes('indiamart.com')) {
+                showToast('Enter valid IndiaMart URL', 'error');
+                return;
             }
+
+            showLoading();
+            
+            let html = null;
+            for (const proxy of PROXIES) {
+                try {
+                    const response = await fetch(proxy + encodeURIComponent(url), {
+                        headers: { 'User-Agent': 'Mozilla/5.0' }
+                    });
+                    if (response.ok) {
+                        html = await response.text();
+                        break;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+            
+            if (!html) {
+                showError('Could not fetch page. Try desktop version URL.');
+                return;
+            }
+
+            const results = extractIndiaMartData(html);
+            displayResults(results);
+            showToast(`Found ${results.phones.length} phones, ${results.whatsapp.length} WhatsApp!`, 'success');
         }
 
-        function extractTextFromHTML(html) {
-            // Remove HTML tags, scripts, styles
-            let text = html
+        function extractIndiaMartData(html) {
+            const text = html
                 .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
                 .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
                 .replace(/<[^>]+>/g, ' ')
-                .replace(/&nbsp;/g, ' ')
-                .replace(/&amp;/g, '&')
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .replace(/&quot;/g, '"')
-                .replace(/&#39;/g, "'")
+                .replace(/&nbsp;|&#160;/g, ' ')
                 .replace(/\s+/g, ' ')
                 .trim();
-            return text;
-        }
 
-        function extractData(text = null) {
-            const input = text || document.getElementById('manualText').value || document.getElementById('inputText').value;
-            if (!input.trim()) return showToast('No text to analyze!', 'warning');
+            const results = { phones: [], whatsapp: [], emails: [], suppliers: [] };
 
-            showLoading('Analyzing content...');
-            
-            const results = {};
-            Object.entries(extractors).forEach(([type, regex]) => {
-                const matches = [...input.matchAll(regex)]
-                    .map(m => m[0])
-                    .filter((item, index, self) => self.indexOf(item) === index && item.length > 2);
-                if (matches.length) results[type] = matches;
+            // Extract phones (multiple patterns)
+            indiaMartPatterns.phones.forEach(pattern => {
+                text.match(pattern)?.forEach(phone => {
+                    const cleanPhone = phone.replace(/[^\d]/g, '');
+                    if (cleanPhone.length === 10 && /^[6-9]/.test(cleanPhone)) {
+                        results.phones.push('+' + 91 + cleanPhone);
+                    }
+                });
             });
 
-            displayResults(results);
-            document.getElementById('status').classList.add('hidden');
-            document.getElementById('results').classList.remove('hidden');
+            // WhatsApp
+            indiaMartPatterns.whatsapp.forEach(pattern => {
+                text.match(pattern)?.forEach(match => {
+                    const num = match.match(/\d{10}/)?.[0];
+                    if (num) results.whatsapp.push('https://wa.me/91' + num);
+                });
+            });
+
+            // Emails
+            results.emails = [...new Set(text.match(indiaMartPatterns.emails) || [])];
+
+            // Suppliers
+            results.suppliers = [...new Set(text.match(indiaMartPatterns.suppliers)?.map(m => m.replace(/Supplier[:\s]+/i, '').trim()) || [])];
+
+            // Remove duplicates
+            results.phones = [...new Set(results.phones)];
+            results.whatsapp = [...new Set(results.whatsapp)];
+
+            return results;
         }
 
         function displayResults(data) {
             let html = '';
-            let total = 0;
             
-            Object.entries(data).forEach(([type, items]) => {
-                total += items.length;
-                const label = type.toUpperCase().replace('LINKEDIN', 'LINKEDIN');
-                html += `
-                    <div class="p-5 rounded-2xl bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 
-                                border-l-4 border-emerald-400 backdrop-blur-sm hover:shadow-xl transition-all">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center gap-3 font-bold text-lg">
-                                ${getIcon(type)} ${label}
-                                <span class="bg-emerald-500/40 px-2 py-1 rounded-full text-xs">${items.length}</span>
-                            </div>
-                            <button onclick="copyItems('${items.join('\\n')}')" class="p-2 hover:bg-white/20 rounded-lg">
-                                <i class="fas fa-copy text-white"></i>
-                            </button>
-                        </div>
-                        <div class="space-y-2 max-h-40 overflow-y-auto">
-                            ${items.map(item => `
-                                <div class="flex items-center justify-between p-3 bg-white/10 rounded-xl 
-                                            hover:bg-white/20 transition-all cursor-pointer group"
-                                     onclick="navigator.clipboard.writeText('${item.replace(/'/g, "\\'")}');showToast('Copied: ${item}')">
-                                    <span class="font-mono text-sm truncate">${item}</span>
-                                    <i class="fas fa-check text-emerald-400 opacity-0 group-hover:opacity-100 ml-2"></i>
+            if (data.phones.length || data.whatsapp.length) {
+                // Phones
+                if (data.phones.length) {
+                    html += `
+                        <div class="p-6 rounded-3xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 
+                                    border-l-4 border-emerald-400 hover:shadow-2xl transition-all">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-phone text-2xl text-emerald-400"></i>
+                                    <div>
+                                        <div class="text-xl font-bold text-white">📞 Phone Numbers</div>
+                                        <div class="text-emerald-100">${data.phones.length} found</div>
+                                    </div>
                                 </div>
-                            `).join('')}
+                            </div>
+                            <div class="space-y-3">
+                                ${data.phones.map(phone => `
+                                    <div class="flex items-center justify-between p-4 bg-white/10 rounded-2xl 
+                                                hover:bg-white/20 transition-all cursor-pointer group"
+                                         onclick="copyContact('${phone}')">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fas fa-mobile-alt text-emerald-400"></i>
+                                            <span class="font-mono font-semibold">${phone}</span>
+                                        </div>
+                                        <i class="fas fa-copy text-white/50 group-hover:text-white transition-all"></i>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
-                    </div>
-                `;
-            });
-            
-            if (total === 0) {
-                html = '<div class="text-center py-12 text-white/60"><i class="fas fa-inbox text-5xl mb-4"></i><div class="text-xl">No data found</div><div class="text-sm mt-2">Try another URL</div></div>';
+                    `;
+                }
+
+                // WhatsApp
+                if (data.whatsapp.length) {
+                    html += `
+                        <div class="p-6 rounded-3xl bg-gradient-to-r from-green-500/20 to-emerald-500/20 
+                                    border-l-4 border-green-400 hover:shadow-2xl transition-all">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <i class="fab fa-whatsapp text-2xl text-green-400"></i>
+                                    <div>
+                                        <div class="text-xl font-bold text-white">💬 WhatsApp</div>
+                                        <div class="text-green-100">${data.whatsapp.length} links</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                ${data.whatsapp.map((wa, i) => `
+                                    <div class="flex items-center justify-between p-4 bg-white/10 rounded-2xl 
+                                                hover:bg-white/20 transition-all cursor-pointer group"
+                                         onclick="window.open('${wa}', '_blank')">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fab fa-whatsapp text-green-400"></i>
+                                            <span class="font-mono">${wa}</span>
+                                        </div>
+                                        <i class="fas fa-external-link-alt text-white/50 group-hover:text-white"></i>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Emails
+                if (data.emails.length) {
+                    html += `
+                        <div class="p-6 rounded-3xl bg-gradient-to-r from-blue-500/20 to-indigo-500/20 
+                                    border-l-4 border-blue-400">
+                            <div class="flex items-center gap-3 mb-4">
+                                <i class="fas fa-envelope text-2xl text-blue-400"></i>
+                                <div class="text-xl font-bold text-white">Emails (${data.emails.length})</div>
+                            </div>
+                            ${data.emails.slice(0, 10).map(email => 
+                                `<div class="p-3 bg-white/10 rounded-xl font-mono text-sm">${email}</div>`
+                            ).join('')}
+                        </div>
+                    `;
+                }
+            } else {
+                html = '<div class="text-center py-16 text-white/60"><i class="fas fa-search text-6xl mb-6"></i><div class="text-2xl font-bold mb-2">No contacts found</div><div class="text-lg">Try another search page</div></div>';
             }
             
             document.getElementById('results').innerHTML = html;
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
         }
 
-        function getIcon(type) {
-            const icons = {
-                emails: '📧', phones: '📞', urls: '🔗', twitter: '🐦', linkedin: '💼', addresses: '🏠'
-            };
-            return icons[type] || '📋';
+        function copyContact(phone) {
+            navigator.clipboard.writeText(phone).then(() => {
+                showToast(`Copied: ${phone}`);
+            });
         }
 
-        function showLoading(msg) {
-            document.getElementById('status').innerHTML = `
-                <div class="flex flex-col items-center gap-3 py-12">
-                    <div class="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-                    <div class="text-white font-medium">${msg}</div>
-                </div>
-            `;
-            document.getElementById('results').classList.add('hidden');
-            document.getElementById('status').classList.remove('hidden');
+        function copyAllContacts() {
+            const phones = Array.from(document.querySelectorAll('[onclick*="copyContact"] span'))
+                               .map(el => el.textContent).join('\n');
+            navigator.clipboard.writeText(phones).then(() => {
+                showToast('All phones copied!');
+            });
         }
 
-        function copyItems(items) {
-            navigator.clipboard.writeText(items).then(() => showToast('All items copied!'));
-        }
-
-        function copyAll() {
-            const allText = Array.from(document.querySelectorAll('#results [onclick]')).map(el => el.textContent).join('\n');
-            navigator.clipboard.writeText(allText).then(() => showToast('Everything copied!'));
-        }
-
-        function downloadResults() {
-            const allText = Array.from(document.querySelectorAll('#results span')).map(el => el.textContent).join('\n');
-            const blob = new Blob([allText], { type: 'text/plain' });
+        function downloadContacts() {
+            const contacts = Array.from(document.querySelectorAll('[onclick*="copyContact"] span'))
+                                 .map(el => el.textContent).join('\n');
+            const blob = new Blob([contacts], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `data-extract-${Date.now()}.txt`;
+            a.download = 'indiamart-contacts.txt';
             a.click();
             URL.revokeObjectURL(url);
             showToast('Downloaded!');
         }
 
-        function clearResults() {
-            document.getElementById('status').classList.remove('hidden');
+        function showLoading() {
+            document.getElementById('loading').classList.remove('hidden');
             document.getElementById('results').classList.add('hidden');
-            document.getElementById('urlInput').value = '';
-            document.getElementById('manualText').value = '';
-            showToast('Cleared!');
+            document.getElementById('emptyState').classList.add('hidden');
+        }
+
+        function showError(msg) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('results').innerHTML = `
+                <div class="text-center py-16 text-orange-400">
+                    <i class="fas fa-exclamation-triangle text-6xl mb-6"></i>
+                    <div class="text-2xl font-bold mb-4">${msg}</div>
+                    <button onclick="extractIndiaMart()" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-2xl font-bold">
+                        Try Again
+                    </button>
+                </div>
+            `;
         }
 
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('toast');
-            document.getElementById('toastMsg').textContent = msg;
-            toast.classList.remove('hidden', 'bg-red-500', 'bg-orange-500');
-            if (type === 'error') toast.classList.add('bg-red-500');
-            if (type === 'warning') toast.classList.add('bg-orange-500');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
+            document.getElementById('toastText').textContent = msg;
+            toast.classList.remove('hidden');
+            if (type === 'error') toast.classList.add('bg-red-500', 'border-red-400');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                if (type === 'error') toast.classList.remove('bg-red-500', 'border-red-400');
+            }, 4000);
         }
 
-        // Enter key support
-        document.getElementById('urlInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') extractFromUrl();
-        });
+        // Auto-extract on load for demo
+        window.onload = () => setTimeout(extractIndiaMart, 1000);
     </script>
 </body>
 </html>
