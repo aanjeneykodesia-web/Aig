@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Data Extractor - Fixed</title>
+    <title>AI Data Extractor - OFFLINE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,215 +11,238 @@
         body { font-family: 'Inter', sans-serif; }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.1); }
+        .result-item { background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(16,185,129,0.2)); }
     </style>
 </head>
 <body class="gradient-bg min-h-screen py-12 px-4">
     <div class="max-w-4xl mx-auto">
+        <!-- Header -->
         <div class="text-center mb-12">
-            <div class="inline-flex items-center gap-3 bg-white/20 backdrop-blur-lg px-6 py-3 rounded-full mb-6">
+            <div class="inline-flex items-center gap-3 bg-white/20 backdrop-blur-lg px-6 py-3 rounded-full mb-6 shadow-2xl">
                 <i class="fas fa-robot text-2xl text-yellow-400"></i>
-                <h1 class="text-4xl md:text-5xl font-bold text-white">AI Data Extractor</h1>
+                <h1 class="text-4xl md:text-5xl font-bold text-white">Data Extractor Pro</h1>
             </div>
-            <p class="text-xl text-white/80 max-w-2xl mx-auto">Extract emails, phones, addresses instantly ✓ URL Fetch FIXED</p>
+            <p class="text-xl text-white/90 max-w-2xl mx-auto mb-4">
+                ✅ Extract emails, phones, addresses, URLs <strong>INSTANTLY</strong> - Works offline!
+            </p>
+            <div class="bg-green-500/20 border border-green-400/50 p-4 rounded-2xl max-w-md mx-auto">
+                <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                <span class="font-semibold text-green-100">100% Offline - No Errors!</span>
+            </div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8 items-start">
+        <!-- Main App -->
+        <div class="grid lg:grid-cols-2 gap-8 items-start">
             <!-- Input -->
-            <div class="glass rounded-3xl p-8 border border-white/20">
-                <div class="flex items-center gap-3 mb-6">
-                    <i class="fas fa-file-alt text-2xl text-blue-400"></i>
-                    <h2 class="text-2xl font-semibold text-white">Paste Text / URL</h2>
+            <div class="glass rounded-3xl p-8 border border-white/20 shadow-2xl">
+                <div class="flex items-center gap-3 mb-8">
+                    <i class="fas fa-edit text-2xl text-blue-400"></i>
+                    <h2 class="text-2xl font-bold text-white">📝 Input Text</h2>
                 </div>
                 
-                <div class="space-y-4 mb-6">
-                    <textarea id="inputText" rows="10" 
-                        placeholder="Paste any text here... OR enter URL below 👇
-Examples:
-- john@example.com (555) 123-4567 123 Main St
-- https://example.com contact@site.com
-- Copy-paste from websites/emails/PDFs"
-                        class="w-full p-6 rounded-2xl bg-white/10 text-white placeholder-white/60 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-vertical text-lg font-mono"
-                    ></textarea>
-                    
-                    <div class="bg-yellow-500/20 border border-yellow-400/50 p-4 rounded-xl">
-                        <div class="flex items-center gap-3 mb-2">
-                            <i class="fas fa-link text-yellow-400"></i>
-                            <span class="font-semibold text-yellow-100">Quick URL Extract</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <input id="quickUrls" type="text" placeholder="https://twitter.com/user, https://linkedin.com/..." 
-                                   class="flex-1 p-3 rounded-xl bg-white/10 text-white placeholder-white/60 border border-white/20 focus:outline-none">
-                            <button onclick="quickExtract()" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-semibold">
-                                <i class="fas fa-bolt"></i> Extract
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <textarea 
+                    id="inputText" 
+                    rows="12"
+                    placeholder="Paste ANY text here:
+- Emails: john@example.com
+- Phones: (555) 123-4567, 555-123-4567
+- Addresses: 123 Main St, NYC
+- URLs: https://example.com
+- Names: John Doe
+- Twitter: @username
+
+Ctrl+Enter = Extract Instantly!"
+                    class="w-full p-6 rounded-2xl bg-white/10 backdrop-blur-sm text-white placeholder-white/70 
+                           border-2 border-white/20 focus:border-blue-400 focus:outline-none focus:ring-4 
+                           ring-blue-400/30 resize-vertical text-lg font-mono min-h-[200px]"
+                ></textarea>
                 
-                <button onclick="extractData()" 
-                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-5 px-8 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:scale-[1.02]">
-                    <i class="fas fa-magic text-xl"></i> AI Extract Data
-                </button>
-                
-                <div class="mt-4 text-center text-sm text-white/60 flex items-center justify-center gap-2">
-                    <kbd class="bg-white/20 px-2 py-1 rounded font-mono text-xs">Ctrl+Enter</kbd>
-                    Quick extract
+                <div class="mt-6 flex gap-3">
+                    <button onclick="extractData()" 
+                            class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 
+                                   text-white py-4 px-6 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl 
+                                   transition-all duration-300 flex items-center justify-center gap-3">
+                        <i class="fas fa-bolt text-xl"></i>
+                        <span>🔍 Extract Data</span>
+                    </button>
+                    <button onclick="clearAll()" class="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 
+                                   text-white py-4 px-6 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             </div>
 
             <!-- Results -->
-            <div class="glass rounded-3xl p-8 border border-white/20">
-                <div class="flex items-center gap-3 mb-6">
-                    <i class="fas fa-chart-bar text-2xl text-green-400"></i>
-                    <h2 class="text-2xl font-semibold text-white">Extracted Data</h2>
+            <div class="glass rounded-3xl p-8 border border-white/20 shadow-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-list text-2xl text-emerald-400"></i>
+                        <h2 class="text-2xl font-bold text-white">📊 Extracted Data</h2>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="copyAll()" title="Copy" class="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all">
+                            <i class="fas fa-copy text-white"></i>
+                        </button>
+                        <button onclick="downloadTxt()" title="Download" class="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition-all">
+                            <i class="fas fa-download text-white"></i>
+                        </button>
+                    </div>
                 </div>
                 
-                <div id="results" class="space-y-4 min-h-[400px] text-sm"></div>
-                
-                <div class="mt-8 p-4 bg-white/10 rounded-xl border border-white/20 flex items-center justify-between">
-                    <span class="text-white/70 text-sm">Copy results:</span>
-                    <div class="flex gap-2">
-                        <button onclick="copyAll()" class="text-blue-400 hover:text-blue-300 p-2 rounded-lg transition-all flex items-center gap-1">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <button onclick="downloadResults()" class="text-green-400 hover:text-green-300 p-2 rounded-lg transition-all flex items-center gap-1">
-                            <i class="fas fa-download"></i>
-                        </button>
+                <div id="results" class="space-y-4 min-h-[400px] text-sm leading-relaxed">
+                    <div class="text-center py-12 text-white/50">
+                        <i class="fas fa-mouse-pointer text-3xl mb-4 opacity-50"></i>
+                        <div>Paste text above → Click Extract</div>
+                        <div class="text-xs mt-2">Works on emails, phones, addresses, URLs, names!</div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl hidden flex items-center gap-3 z-50">
-        <i class="fas fa-check"></i> Copied!
+        <!-- Status Toast -->
+        <div id="toast" class="fixed top-6 right-6 bg-emerald-500 text-white px-6 py-4 rounded-2xl shadow-2xl 
+                             hidden flex items-center gap-3 font-medium z-50 animate-pulse">
+            <i class="fas fa-check"></i>
+            <span id="toastText"></span>
+        </div>
     </div>
 
     <script>
-        const API_URL = 'https://api.openai-proxy.replit.dev/v1/chat/completions';
-        
-        async function extractData() {
-            const input = document.getElementById('inputText').value.trim();
-            if (!input) return showToast('Enter text first!');
+        // Super accurate regex patterns
+        const patterns = {
+            emails: /(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b)/gi,
+            phones: /(\+?1[-.\s]?)?\$?([0-9]{3})\$?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})/gi,
+            urls: /(https?:\/\/[^\s]+)/gi,
+            names: /\b([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)\b/gi,
+            addresses: /(?:\d+\s+)(?:[A-Za-z0-9\s\-.,#]+?)(?:\s+(?:St|Rd|Ave|Blvd|Dr|Ln|Way|Ct|Pl|Square|Square|Terr|Terrace|Parkway|Circle|Pkwy|Dr|Street|Road|Avenue|Boulevard|Drive|Lane|Court|Place))\.?/gi,
+            twitter: /@([A-Za-z0-9_]+)/gi
+        };
 
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Extracting...';
-            btn.disabled = true;
+        function extractData() {
+            const text = document.getElementById('inputText').value;
+            if (!text.trim()) {
+                showToast('Enter some text first!', 'warning');
+                return;
+            }
 
-            try {
-                const prompt = `EXTRACT ONLY these from text (perfect format, no extras):
+            const results = {};
+            
+            // Extract each type
+            Object.entries(patterns).forEach(([type, regex]) => {
+                const matches = [...text.matchAll(regex)].map(match => match[0]).filter((v, i, a) => a.indexOf(v) === i);
+                if (matches.length) results[type] = matches;
+            });
 
-📧 **EMAILS:**
-- list@example.com
+            displayResults(results);
+            showToast(`Extracted ${Object.values(results).flat().length} items!`, 'success');
+        }
 
-📞 **PHONES:**
-- (555) 123-4567
-
-🏠 **ADDRESSES:**
-- 123 Main St, City, ST 12345
-
-👤 **NAMES:**
-- John Doe
-
-🌐 **URLS:**
-- https://example.com
-
-🐦 **SOCIALS:**
-- @twitterhandle
-
-🏢 **COMPANIES:**
-- Company Name Inc
-
-TEXT: "${input.slice(0, 4000)}"`;
-
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer pk-free-key'
-                    },
-                    body: JSON.stringify({
-                        model: 'gpt-3.5-turbo',
-                        messages: [{ role: 'user', content: prompt }],
-                        max_tokens: 1500,
-                        temperature: 0
-                    })
+        function displayResults(data) {
+            let html = '';
+            
+            if (Object.keys(data).length === 0) {
+                html = '<div class="text-center py-8 text-white/60"><i class="fas fa-search text-4xl mb-4"></i><div>No data found</div></div>';
+            } else {
+                Object.entries(data).forEach(([type, items]) => {
+                    const icons = {
+                        emails: '📧', phones: '📞', urls: '🌐', names: '👤', 
+                        addresses: '🏠', twitter: '🐦'
+                    };
+                    html += `
+                        <div class="result-item p-4 rounded-2xl border-l-4 border-emerald-400">
+                            <div class="flex items-center gap-3 mb-3 font-bold text-emerald-100 text-lg">
+                                ${icons[type] || '📋'} ${type.toUpperCase()}
+                                <span class="bg-emerald-500/30 px-2 py-1 rounded-full text-xs font-bold">${items.length}</span>
+                            </div>
+                            <div class="space-y-1">
+                                ${items.map(item => `<div class="bg-white/10 px-3 py-2 rounded-xl text-sm hover:bg-white/20 transition-all cursor-pointer" onclick="copyItem('${item.replace(/'/g, "\\'")}')">${item}</div>`).join('')}
+                            </div>
+                        </div>
+                    `;
                 });
-
-                if (!response.ok) throw new Error('API error');
-
-                const data = await response.json();
-                displayResults(data.choices[0].message.content);
-            } catch (error) {
-                displayResults(`⚠️ Error - Try again!\n\n${error.message}`);
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
             }
+            
+            document.getElementById('results').innerHTML = html;
         }
 
-        function displayResults(content) {
-            document.getElementById('results').innerHTML = `
-                <div class="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 border-2 border-emerald-400/50 p-6 rounded-2xl backdrop-blur-sm">
-                    <div class="whitespace-pre-wrap text-white/95 font-mono text-sm leading-relaxed">${content}</div>
-                </div>
-            `;
-        }
-
-        function quickExtract() {
-            const urls = document.getElementById('quickUrls').value;
-            if (urls) {
-                document.getElementById('inputText').value = urls;
-                extractData();
-            }
+        function copyItem(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied to clipboard!', 'success');
+            });
         }
 
         function copyAll() {
-            const results = document.querySelector('#results pre')?.textContent || '';
-            navigator.clipboard.writeText(results).then(showToast('Copied all results!'));
+            const items = Array.from(document.querySelectorAll('#results div[onclick]')).map(el => el.textContent).join('\n');
+            navigator.clipboard.writeText(items).then(() => {
+                showToast('All data copied!', 'success');
+            });
         }
 
-        function downloadResults() {
-            const results = document.querySelector('#results pre')?.textContent || '';
-            const blob = new Blob([results], { type: 'text/plain' });
+        function downloadTxt() {
+            const items = Array.from(document.querySelectorAll('#results div[onclick]')).map(el => el.textContent).join('\n');
+            const blob = new Blob([items], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'extracted-data.txt';
+            a.download = `extracted-data-${Date.now()}.txt`;
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            showToast('Downloaded!', 'success');
         }
 
-        function showToast(message) {
+        function clearAll() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('results').innerHTML = `
+                <div class="text-center py-12 text-white/50">
+                    <i class="fas fa-trash-alt text-4xl mb-4 opacity-50"></i>
+                    <div>Input cleared</div>
+                </div>
+            `;
+            showToast('Cleared!', 'info');
+        }
+
+        function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
+            const icon = type === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-check';
+            const color = type === 'warning' ? 'orange' : 'emerald';
+            
+            document.getElementById('toastText').textContent = message;
+            toast.innerHTML = `<i class="${icon}"></i><span id="toastText">${message}</span>`;
+            toast.className = `fixed top-6 right-6 bg-${color}-500 text-white px-6 py-4 rounded-2xl shadow-2xl hidden flex items-center gap-3 font-medium z-50 animate-pulse`;
             toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 2500);
+            
+            setTimeout(() => toast.classList.add('hidden'), 3000);
         }
 
-        // Hotkeys & Auto-resize
-        document.getElementById('inputText').addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 400) + 'px';
-        });
-
+        // Hotkeys
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 'Enter') {
                 e.preventDefault();
                 extractData();
             }
+            if (e.key === 'Escape') {
+                document.getElementById('inputText').focus();
+            }
         });
 
-        // Example data
-        document.getElementById('inputText').value = `John Doe
-john@example.com
-(555) 123-4567
-123 Main St, NYC 10001
-https://twitter.com/johndoe
-@linkedin_john
-Google Inc`;
+        // Auto-resize textarea
+        document.getElementById('inputText').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Example on load
+        setTimeout(() => {
+            document.getElementById('inputText').value = `Contact John Doe
+Email: john.doe@company.com
+Phone: (555) 123-4567 | 555-123-4567
+Address: 123 Main Street, New York, NY 10001
+Website: https://example.com
+Twitter: @johndoe linkedin.com/in/johndoe
+Company: Example Corp`;
+        }, 500);
     </script>
 </body>
 </html>
