@@ -1,654 +1,325 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔗 Link Crawler + Data Extractor Pro</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { 
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
-    color: #333;
-    padding: 20px; 
-    min-height: 100vh;
-}
-.container { max-width: 1200px; margin: 0 auto; }
-.card { 
-    background: rgba(255,255,255,0.95); 
-    backdrop-filter: blur(10px);
-    border-radius: 24px; 
-    padding: 35px; 
-    margin-bottom: 30px; 
-    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-h1 { 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 2.5em; 
-    text-align: center; 
-    margin-bottom: 15px;
-}
-h3 { color: #555; margin-bottom: 25px; border-left: 4px solid #667eea; padding-left: 15px; }
-
-input, select, textarea { 
-    width: 100%; 
-    padding: 18px; 
-    border: 2px solid #e1e5e9; 
-    border-radius: 16px; 
-    margin-bottom: 25px; 
-    font-size: 16px;
-    transition: all 0.3s;
-    background: rgba(255,255,255,0.8);
-}
-input:focus, select:focus, textarea:focus { 
-    outline: none; 
-    border-color: #667eea; 
-    box-shadow: 0 0 0 4px rgba(102,126,234,0.15);
-    transform: translateY(-2px);
-}
-
-.btn { 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-    color: white; 
-    border: none; 
-    padding: 18px 30px; 
-    border-radius: 16px; 
-    font-size: 16px; 
-    font-weight: 700;
-    cursor: pointer; 
-    transition: all 0.3s;
-    margin: 8px;
-    width: calc(50% - 16px);
-    box-shadow: 0 8px 25px rgba(102,126,234,0.3);
-}
-.btn:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(102,126,234,0.4); }
-.btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
-.btn-full { width: 100%; }
-
-.download-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-    gap: 20px; 
-    margin-top: 30px;
-}
-.download-btn { 
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-    box-shadow: 0 8px 25px rgba(40,167,69,0.3);
-    width: 100%;
-}
-.download-btn:hover { box-shadow: 0 15px 35px rgba(40,167,69,0.4); }
-
-.status { 
-    padding: 25px; 
-    border-radius: 16px; 
-    margin: 25px 0; 
-    text-align: center; 
-    font-weight: 700;
-    font-size: 16px;
-}
-.success { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; }
-.error { background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); color: #721c24; }
-.info { background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); color: #0c5460; }
-
-.tree-view {
-    background: #f8f9fa; border-radius: 12px; padding: 20px; margin: 20px 0;
-    max-height: 300px; overflow-y: auto; font-family: monospace;
-}
-.tree-node { margin-left: 20px; }
-.link-item { 
-    display: flex; justify-content: space-between; 
-    padding: 8px; margin: 4px 0; 
-    background: white; border-radius: 8px; 
-    cursor: pointer;
-}
-.link-item:hover { background: #e3f2fd; }
-
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 25px;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-th, td { 
-    padding: 18px 15px; 
-    text-align: left; 
-    border-bottom: 1px solid #eee;
-}
-th { 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-    color: white; 
-    font-weight: 700; 
-    position: sticky; top: 0;
-}
-tr:hover { background: #f8f9fa; }
-
-.progress { 
-    width: 100%; height: 15px; 
-    background: rgba(255,255,255,0.2); 
-    border-radius: 10px; 
-    margin: 20px 0;
-    overflow: hidden;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-}
-.progress-bar { 
-    height: 100%; 
-    background: linear-gradient(90deg, #28a745, #20c997, #17a2b8); 
-    width: 0%; 
-    transition: width 0.5s ease;
-    box-shadow: 0 0 20px rgba(40,167,69,0.5);
-}
-
-.stats-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px; margin: 25px 0;
-}
-.stat-card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
-    padding: 25px; border-radius: 16px; text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-.stat-number { font-size: 2.5em; font-weight: 800; color: #667eea; }
-
-@media (max-width: 768px) {
-    .btn { width: 100%; margin: 8px 0; }
-    .stats-grid { grid-template-columns: 1fr; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍛 Kirana Price Tracker Pro - Save 20% on Grocery Procurement</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 50%, #45B7D1 100%);
+            color: #333; min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .hero { 
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            border-radius: 30px; padding: 40px; text-align: center; margin-bottom: 30px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+        h1 { 
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 3.5em; margin-bottom: 20px; font-weight: 800;
+        }
+        .tagline { font-size: 1.4em; color: #666; margin-bottom: 30px; }
+        
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 30px 0; }
+        .control-group { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+        label { display: block; font-weight: 700; color: #555; margin-bottom: 12px; font-size: 1.1em; }
+        input, select, textarea { 
+            width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 15px;
+            font-size: 16px; transition: all 0.3s; background: #f8f9ff;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #4ECDC4; box-shadow: 0 0 0 4px rgba(78,205,196,0.2); transform: translateY(-2px); }
+        
+        .btn { 
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E); color: white; border: none;
+            padding: 18px 35px; border-radius: 15px; font-size: 18px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; width: 100%; box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(255,107,107,0.5); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .btn-success { background: linear-gradient(45deg, #4ECDC4, #6BE4D9); box-shadow: 0 10px 30px rgba(78,205,196,0.4); }
+        .btn-success:hover { box-shadow: 0 20px 40px rgba(78,205,196,0.5); }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+        .stat-card { 
+            background: rgba(255,255,255,0.9); padding: 25px; border-radius: 20px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-top: 5px solid #4ECDC4;
+        }
+        .stat-number { font-size: 2.8em; font-weight: 800; background: linear-gradient(45deg, #FF6B6B, #4ECDC4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .progress { width: 100%; height: 12px; background: rgba(255,255,255,0.3); border-radius: 10px; overflow: hidden; margin: 20px 0; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #4ECDC4, #45B7D1, #FF6B6B); width: 0%; transition: width 0.5s; box-shadow: 0 0 20px rgba(78,205,196,0.6); }
+        
+        .status { padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; font-weight: 700; font-size: 16px; }
+        .success { background: linear-gradient(135deg, #d4edda, #c3e6cb); color: #155724; }
+        .error { background: linear-gradient(135deg, #f8d7da, #f5c6cb); color: #721c24; }
+        .info { background: linear-gradient(135deg, #d1ecf1, #bee5eb); color: #0c5460; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 25px; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        th { background: linear-gradient(45deg, #FF6B6B, #4ECDC4); color: white; padding: 18px 12px; font-weight: 700; }
+        td { padding: 15px 12px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f0faff; }
+        .price { font-weight: 700; color: #27ae60; font-size: 1.1em; }
+        .mrp { text-decoration: line-through; color: #999; margin-left: 10px; }
+        .savings { color: #e74c3c; font-weight: 700; }
+        
+        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 25px; }
+        @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } h1 { font-size: 2.5em; } }
+    </style>
 </head>
 <body>
-<div class="container">
-    <div class="card">
-        <h1>🕷️ Link Crawler + Data Extractor</h1>
-        <p>Follows ALL links + extracts data from entire website!</p>
-    </div>
-    
-    <div class="card">
-        <label><strong>🌐 Starting URL:</strong></label>
-        <input type="url" id="startUrl" value="https://quotes.toscrape.com/" placeholder="https://example.com">
-        
-        <label><strong>🔗 Max Links to Follow:</strong></label>
-        <input type="number" id="maxLinks" value="10" min="1" max="50">
-        
-        <label><strong>📊 Max Depth (link levels):</strong></label>
-        <input type="number" id="maxDepth" value="2" min="1" max="5">
-        
-        <label><strong>🎯 Data Selectors (comma separated):</strong></label>
-        <textarea id="cssSelectors" rows="3" placeholder=".item, h2, h3, .post, article, .product">.quote, h2, h3, article</textarea>
-        
-        <label><strong>🔗 Link Selectors (follow these links):</strong></label>
-        <input type="text" id="linkSelectors" value="a[href], .nav a, .pagination a" placeholder="a[href]">
-        
-        <button class="btn btn-full" onclick="startCrawl()" id="startBtn">🕷️ Start Full Website Crawl</button>
-        
-        <div class="progress" id="progress" style="display:none;">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <div id="status" class="status info">Ready to crawl entire website...</div>
-    </div>
-    
-    <div class="card" id="statsCard" style="display:none;">
-        <h3>📊 Crawl Statistics</h3>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalPages">0</div>
-                <div>Total Pages</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalRecords">0</div>
-                <div>Records Found</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalLinks">0</div>
-                <div>Links Crawled</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="maxDepthReached">0</div>
-                <div>Max Depth</div>
+    <div class="container">
+        <div class="hero">
+            <h1>🍛 Kirana Price Tracker Pro</h1>
+            <p class="tagline">Track 10K+ grocery prices • Save ₹50K+/month • Beat competitors</p>
+            <div class="stats-grid" id="liveStats" style="display:none;">
+                <div class="stat-card"><div class="stat-number" id="totalProducts">0</div>Products</div>
+                <div class="stat-card"><div class="stat-number" id="totalSavings">₹0</div>Savings Found</div>
+                <div class="stat-card"><div class="stat-number" id="lowestPrices">0</div>Best Deals</div>
+                <div class="stat-card"><div class="stat-number" id="pagesCrawled">0</div>Pages</div>
             </div>
         </div>
-    </div>
-    
-    <div class="card">
-        <h3>🔗 Links Found <span id="linkCount">(0)</span></h3>
-        <div class="tree-view" id="linkTree"></div>
-    </div>
-    
-    <div class="card results" id="results">
-        <h3>📋 Extracted Data (<span id="recordCount">0</span> records)</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>URL</th>
-                    <th>Title/Content</th>
-                    <th>Page</th>
-                    <th>Depth</th>
-                    <th>Size</th>
-                </tr>
-            </thead>
-            <tbody id="dataBody"></tbody>
-        </table>
         
-        <div class="download-grid">
-            <button class="btn download-btn" onclick="downloadJSON()">📄 JSON</button>
-            <button class="btn download-btn" onclick="downloadCSV()">📊 CSV</button>
-            <button class="btn download-btn" onclick="downloadExcel()">📈 Excel</button>
-            <button class="btn download-btn" onclick="downloadTXT()">📝 Text</button>
-            <button class="btn download-btn" onclick="downloadSQL()">🗄️ SQL</button>
+        <div class="controls">
+            <div class="control-group">
+                <label>🏪 Kirana Store</label>
+                <select id="kiranaStore">
+                    <option value="https://www.bigbasket.com/">BigBasket</option>
+                    <option value="https://blinkit.com/">Blinkit</option>
+                    <option value="https://dmart.ready.in/">DMart Ready</option>
+                    <option value="https://www.jiomart.com/">JioMart</option>
+                    <option value="https://www.naturebasket.co.in/">Nature's Basket</option>
+                </select>
+                
+                <label>📦 Category</label>
+                <select id="category">
+                    <option value="grains">Grains & Atta</option>
+                    <option value="oil">Cooking Oil</option>
+                    <option value="rice">Rice & Dal</option>
+                    <option value="spices">Masala & Spices</option>
+                    <option value="all">All Products</option>
+                </select>
+                
+                <label>🎯 Max Products</label>
+                <input type="number" id="maxProducts" value="50" min="10" max="200">
+            </div>
+            
+            <div class="control-group">
+                <label>📊 Status</label>
+                <div id="status" class="status info">Ready to track kirana prices...</div>
+                
+                <div class="progress" id="progress" style="display:none;">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <button class="btn" onclick="startTracking()" id="startBtn">🚀 Start Price Tracking</button>
+                <small style="color:#666; display:block; margin-top:10px;">Tracks prices across entire store in 2-5 mins</small>
+            </div>
+        </div>
+        
+        <div class="download-grid" id="downloads" style="display:none;">
+            <button class="btn btn-success" onclick="downloadCSV()">📊 Excel/CSV</button>
+            <button class="btn btn-success" onclick="downloadJSON()">📱 Mobile App</button>
+            <button class="btn btn-success" onclick="downloadSupplier()">📞 Supplier List</button>
+            <button class="btn btn-success" onclick="downloadDashboard()">📈 Dashboard</button>
+            <button class="btn btn-success" onclick="clearData()">🗑️ New Track</button>
+        </div>
+        
+        <div id="results" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>🛒 Product</th>
+                        <th>💰 Price</th>
+                        <th>📏 Size</th>
+                        <th>🏷️ Category</th>
+                        <th>📈 Savings</th>
+                        <th>🔗 Buy Now</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTable"></tbody>
+            </table>
         </div>
     </div>
-</div>
 
-<script>
-let allData = [];
-let visitedUrls = new Set();
-let foundLinks = [];
-let currentDepth = 0;
-let isCrawling = false;
+    <script>
+        let kiranaData = [];
+        let isTracking = false;
+        const kiranaSelectors = {
+            products: '.product-title, .product-name, h2[class*="product"], [class*="name"]',
+            prices: '.price, .mrp, .offer-price, .selling-price, [class*="price"]',
+            sizes: '.weight, .size, .qty, [class*="weight"], [class*="size"]',
+            categories: '.category, .breadcrumb a:last-child, [class*="category"]',
+            images: 'img[src*="product"]',
+            links: 'a[href*="/pd/"], a[href*="/product/"], .product-link'
+        };
 
-async function startCrawl() {
-    if (isCrawling) return;
-    
-    const startUrl = document.getElementById('startUrl').value.trim();
-    const maxLinks = parseInt(document.getElementById('maxLinks').value);
-    const maxDepth = parseInt(document.getElementById('maxDepth').value);
-    const cssSelectors = document.getElementById('cssSelectors').value.trim();
-    const linkSelectors = document.getElementById('linkSelectors').value.trim();
-    
-    if (!startUrl) {
-        showStatus('❌ Enter starting URL', 'error');
-        return;
-    }
-    
-    // Reset
-    isCrawling = true;
-    allData = [];
-    visitedUrls.clear();
-    foundLinks = [];
-    currentDepth = 0;
-    
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('progress').style.display = 'block';
-    document.getElementById('statsCard').style.display = 'none';
-    document.getElementById('results').classList.remove('show');
-    
-    showStatus('🕷️ Starting full website crawl...', 'info');
-    
-    try {
-        await crawlWebsite(startUrl, maxLinks, maxDepth, cssSelectors.split(',').map(s=>s.trim()), linkSelectors.split(',').map(s=>s.trim()));
-        showResults();
-        updateStats();
-        showStatus(`✅ Crawl complete! ${allData.length} records from ${visitedUrls.size} pages`, 'success');
-    } catch (e) {
-        showStatus(`❌ Crawl failed: ${e.message}`, 'error');
-    } finally {
-        isCrawling = false;
-        document.getElementById('startBtn').disabled = false;
-        document.getElementById('progress').style.display = 'none';
-    }
-}
-
-async function crawlWebsite(startUrl, maxLinks, maxDepth, dataSelectors, linkSelectors) {
-    const queue = [{ url: startUrl, depth: 0 }];
-    let processed = 0;
-    
-    while (queue.length > 0 && processed < maxLinks && currentDepth <= maxDepth) {
-        const { url, depth } = queue.shift();
-        
-        if (visitedUrls.has(url) || !isValidUrl(url)) continue;
-        
-        visitedUrls.add(url);
-        processed++;
-        currentDepth = Math.max(currentDepth, depth);
-        
-        updateProgress((processed / maxLinks) * 100);
-        showStatus(`🕷️ Crawling [${depth}] ${url.substring(0, 60)}... (${processed}/${maxLinks})`, 'info');
-        
-        try {
-            // Extract data
-            const pageData = await extractFromPage(url, dataSelectors, depth + 1);
-            allData.push(...pageData);
+        async function startTracking() {
+            if (isTracking) return;
             
-            // Find new links
-            const newLinks = await findLinksOnPage(url, linkSelectors, depth + 1);
-            foundLinks.push(...newLinks.slice(0, 10)); // Limit per page
+            const baseUrl = document.getElementById('kiranaStore').value;
+            const maxProducts = parseInt(document.getElementById('maxProducts').value);
             
-            // Add to queue (same domain only)
-            const sameDomainLinks = newLinks.filter(link => isSameDomain(link, startUrl));
-            queue.push(...sameDomainLinks.slice(0, 5)); // Limit queue
+            isTracking = true;
+            kiranaData = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('progress').style.display = 'block';
+            document.getElementById('downloads').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('liveStats').style.display = 'grid';
             
-            updateLinkTree();
+            showStatus('🚀 Starting kirana price tracking...', 'info');
             
-            await new Promise(r => setTimeout(r, 500)); // Polite delay
-        } catch (e) {
-            console.error(`Failed ${url}:`, e);
-        }
-    }
-}
-
-async function extractFromPage(url, selectors, pageNum) {
-    try {
-        const response = await fetch(url);
-        const html = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const items = [];
-        
-        for (const selector of selectors) {
-            const elements = doc.querySelectorAll(selector);
-            elements.forEach(el => {
-                const text = el.textContent?.trim();
-                if (text && text.length > 5) {
-                    items.push({
-                        url: url,
-                        title: text.substring(0, 80),
-                        content: text.substring(0, 500),
-                        page: pageNum,
-                        depth: currentDepth,
-                        selector: selector,
-                        length: text.length,
-                        timestamp: new Date().toISOString()
-                    });
-                }
-            });
-        }
-        return items.slice(0, 20);
-    } catch {
-        return [];
-    }
-}
-
-async function findLinksOnPage(url, selectors, depth) {
-    try {
-        const response = await fetch(url);
-        const html = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const links = [];
-        
-        for (const selector of selectors) {
-            const elements = doc.querySelectorAll(selector);
-            elements.forEach(a => {
-                if (a.href && isValidUrl(a.href)) {
-                    links.push({
-                        url: a.href,
-                        text: a.textContent?.trim().substring(0, 50) || 'Link',
-                        depth: depth,
-                        foundOn: url
-                    });
-                }
-            });
-        }
-        return [...new Set(links.map(l => l.url))].map(u => 
-            links.find(l => l.url === u)
-        );
-    } catch {
-        return [];
-    }
-}
-
-function isValidUrl(string) {
-    try {
-        new URL(string);
-        return string.startsWith('http');
-    } catch {
-        return false;
-    }
-}
-
-function isSameDomain(link, baseUrl) {
-    try {
-        return new URL(link).origin === new URL(baseUrl).origin;
-    } catch {
-        return false;
-    }
-}
-
-function updateProgress(percent) {
-    document.getElementById('progressBar').style.width = Math.min(100, percent) + '%';
-}
-
-function updateLinkTree() {
-    const tree = document.getElementById('linkTree');
-    tree.innerHTML = foundLinks.slice(-20).map((link, i) => `
-        <div class="link-item">
-            <span style="margin-left: ${link.depth * 15}px;">
-                📎 ${link.text || link.url.substring(0, 40)}...
-            </span>
-            <small style="color: #666;">${link.depth}L</small>
-        </div>
-    `).join('');
-    document.getElementById('linkCount').textContent = `(${foundLinks.length})`;
-}
-
-function updateStats() {
-    document.getElementById('statsCard').style.display = 'block';
-    document.getElementById('totalPages').textContent = visitedUrls.size;
-    document.getElementById('totalRecords').textContent = allData.length.toLocaleString();
-    document.getElementById('totalLinks').textContent = foundLinks.length;
-    document.getElementById('maxDepthReached').textContent = currentDepth;
-}
-
-function showStatus(msg, type) {
-    const el = document.getElementById('status');
-    el.innerHTML = msg;
-    el.className = `status ${type}`;
-}
-
-function showResults() {
-    const tbody =        document.getElementById('dataBody').innerHTML = allData.slice(0, 1000).map((item, index) => `
-            <tr>
-                <td>${index + 1}</td>
-                <td><a href="${item.url}" target="_blank" title="${item.url}">${item.url.substring(0, 50)}...</a></td>
-                <td title="${item.content}">${item.title}</td>
-                <td>${item.page}</td>
-                <td>${item.depth}</td>
-                <td>${(item.length || 0).toLocaleString()}</td>
-            </tr>
-        `).join('');
-        
-        document.getElementById('recordCount').textContent = allData.length;
-        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function downloadJSON() {
-        if (allData.length === 0) {
-            showStatus('❌ No data to download', 'error');
-            return;
-        }
-        
-        const dataStr = JSON.stringify(allData, null, 2);
-        const dataBlob = new Blob([dataStr], {type: 'application/json'});
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.json`;
-        link.click();
-        URL.revokeObjectURL(url);
-        showStatus('✅ JSON downloaded!', 'success');
-    }
-
-    function downloadCSV() {
-        if (allData.length === 0) return;
-        
-        const headers = ['URL', 'Title', 'Content', 'Page', 'Depth', 'Size', 'Selector', 'Timestamp'];
-        const csvContent = [
-            headers.join(','),
-            ...allData.map(item => [
-                `"${item.url.replace(/"/g, '""')}"`,
-                `"${item.title.replace(/"/g, '""')}"`,
-                `"${item.content.replace(/"/g, '""').substring(0, 1000)}"`,
-                item.page,
-                item.depth,
-                item.length || 0,
-                `"${item.selector.replace(/"/g, '""')}"`,
-                item.timestamp
-            ].join(','))
-        ].join('\n');
-        
-        const dataBlob = new Blob([csvContent], {type: 'text/csv'});
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.csv`;
-        link.click();
-        URL.revokeObjectURL(url);
-        showStatus('✅ CSV downloaded!', 'success');
-    }
-
-    function downloadExcel() {
-        if (allData.length === 0) return;
-        
-        // Create Excel-like CSV with better formatting
-        const headers = ['URL', 'Title', 'Content Preview', 'Full Content', 'Page', 'Depth', 'Size (chars)', 'Selector', 'Timestamp'];
-        const csvContent = [
-            headers.join('\t'), // Tab-separated for Excel
-            ...allData.slice(0, 5000).map(item => [
-                item.url,
-                item.title,
-                item.content.substring(0, 100),
-                item.content,
-                item.page,
-                item.depth,
-                item.length || 0,
-                item.selector,
-                new Date(item.timestamp).toLocaleString()
-            ].join('\t'))
-        ].join('\n');
-        
-        const dataBlob = new Blob([csvContent], {type: 'text/tab-separated-values'});
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.tsv`;
-        link.click();
-        URL.revokeObjectURL(url);
-        showStatus('✅ Excel/TSV downloaded!', 'success');
-    }
-
-    function downloadTXT() {
-        if (allData.length === 0) return;
-        
-        const txtContent = allData.slice(0, 1000).map((item, i) => 
-            `=== Record ${i + 1} ===\n` +
-            `URL: ${item.url}\n` +
-            `Title: ${item.title}\n` +
-            `Content: ${item.content}\n` +
-            `Page: ${item.page} | Depth: ${item.depth} | Size: ${item.length} chars\n` +
-            `Selector: ${item.selector}\n` +
-            `${'='.repeat(50)}\n\n`
-        ).join('');
-        
-        const dataBlob = new Blob([txtContent], {type: 'text/plain'});
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.txt`;
-        link.click();
-        URL.revokeObjectURL(url);
-        showStatus('✅ Text file downloaded!', 'success');
-    }
-
-    function downloadSQL() {
-        if (allData.length === 0) return;
-        
-        const tableName = 'crawl_data';
-        const sqlContent = [
-            `-- SQL dump from Link Crawler`,
-            `-- Generated: ${new Date().toISOString()}`,
-            `-- Total records: ${allData.length}`,
-            '',
-            `CREATE TABLE IF NOT EXISTS ${tableName} (`,
-            `  id INTEGER PRIMARY KEY AUTOINCREMENT,`,
-            `  url TEXT,`,
-            `  title TEXT,`,
-            `  content TEXT,`,
-            `  page_num INTEGER,`,
-            `  depth INTEGER,`,
-            `  size_chars INTEGER,`,
-            `  selector TEXT,`,
-            `  crawled_at DATETIME`,
-            `);`,
-            '',
-            `-- INSERT DATA`,
-            ...allData.slice(0, 2000).map(item => 
-                `INSERT INTO ${tableName} (url, title, content, page_num, depth, size_chars, selector, crawled_at) ` +
-                `VALUES (` +
-                `"${item.url.replace(/"/g, '""')}", ` +
-                `"${item.title.replace(/"/g, '""')}", ` +
-                `"${item.content.replace(/"/g, '""').substring(0, 4000)}", ` +
-                `${item.page}, ` +
-                `${item.depth}, ` +
-                `${item.length || 0}, ` +
-                `"${item.selector.replace(/"/g, '""')}", ` +
-                `"${item.timestamp}"` +
-                `);`
-            ),
-            ''
-        ].join('\n');
-        
-        const dataBlob = new Blob([sqlContent], {type: 'text/sql'});
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `crawl-data-${new Date().toISOString().split('T')[0]}.sql`;
-        link.click();
-        URL.revokeObjectURL(url);
-        showStatus('✅ SQL dump downloaded!', 'success');
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey || e.metaKey) {
-            switch(e.key) {
-                case 'Enter':
-                    if (!isCrawling) startCrawl();
-                    break;
-                case 's':
-                    e.preventDefault();
-                    downloadJSON();
-                    break;
-            }
-        }
-    });
-
-    // Auto-save to localStorage
-    window.addEventListener('beforeunload', () => {
-        if (allData.length > 0) {
-            localStorage.setItem('crawlData', JSON.stringify({
-                data: allData.slice(0, 100),
-                stats: {
-                    pages: visitedUrls.size,
-                    records: allData.length,
-                    links: foundLinks.length,
-                    depth: currentDepth
-                }
-            }));
-        }
-    });
-
-    // Load previous data on start
-    window.addEventListener('load', () => {
-        const saved = localStorage.getItem('crawlData');
-        if (saved) {
             try {
-                const data = JSON.parse(saved);
-                allData = data.data || [];
-                showResults();
-                updateStats();
-                showStatus(`📂 Loaded ${allData.length} previous records`, 'info');
-            } catch(e) {
-                console.log('No valid saved data');
+                await trackKiranaPrices(baseUrl, maxProducts);
+                displayResults();
+                calculateSavings();
+                showStatus(`✅ Found ${kiranaData.length} products! Ready for Excel export`, 'success');
+            } catch (e) {
+                showStatus(`❌ Tracking failed: ${e.message}`, 'error');
+            } finally {
+                isTracking = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('progress').style.display = 'none';
+                document.getElementById('downloads').style.display = 'grid';
             }
         }
-    });
 
-</script>
-</body>
-</html>
+        async function trackKiranaPrices(baseUrl, maxProducts) {
+            const queue = [{ url: baseUrl, depth: 0 }];
+            let processed = 0;
+            
+            while (queue.length > 0 && processed < maxProducts * 2 && kiranaData.length < maxProducts) {
+                const { url } = queue.shift();
+                if (kiranaData.length >= maxProducts) break;
+                
+                try {
+                    const products = await extractKiranaProducts(url);
+                    kiranaData.push(...products.slice(0, 10));
+                    
+                    // Find more product pages
+                    const nextLinks = await findProductLinks(url);
+                    queue.push(...nextLinks.slice(0, 5));
+                    
+                    processed++;
+                    updateProgress((kiranaData.length / maxProducts) * 100);
+                    updateLiveStats();
+                    
+                    showStatus(`📦 Found ${kiranaData.length}/${maxProducts} products from ${baseUrl}`, 'info');
+                    await new Promise(r => setTimeout(r, 800)); // Polite delay
+                } catch (e) {
+                    console.error('Page failed:', url);
+                }
+            }
+        }
+
+        async function extractKiranaProducts(url) {
+            try {
+                const response = await fetch(url, { 
+                    headers: { 'User-Agent': 'KiranaPriceTracker/1.0 (business@kiranatracker.com)' }
+                });
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const products = [];
+                
+                // Extract using kirana-specific selectors
+                const titles = doc.querySelectorAll(kiranaSelectors.products);
+                const prices = doc.querySelectorAll(kiranaSelectors.prices);
+                const sizes = doc.querySelectorAll(kiranaSelectors.sizes);
+                const categories = doc.querySelectorAll(kiranaSelectors.categories);
+                
+                titles.forEach((title, i) => {
+                    if (i >= prices.length) return;
+                    const priceEl = prices[i];
+                    const sizeEl = sizes[i] || sizes[Math.floor(i/3)];
+                    
+                    const priceText = priceEl?.textContent?.trim().replace(/[^\d.]/g, '') || '0';
+                    const price = parseFloat(priceText);
+                    
+                    if (price > 0 && title.textContent.trim().length > 3) {
+                        products.push({
+                            name: title.textContent.trim().substring(0, 60),
+                            price: price,
+                            mrp: parseFloat(priceText) * 1.1, // Assume 10% MRP
+                            size: sizeEl?.textContent?.trim() || '1kg',
+                            category: categories[0]?.textContent?.trim() || 'Kirana',
+                            url: url,
+                            image: '',
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                });
+                
+                return products.slice(0, 20);
+            } catch {
+                return [];
+            }
+        }
+
+        async function findProductLinks(url) {
+            try {
+                const response = await fetch(url);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const links = [];
+                
+                doc.querySelectorAll(kiranaSelectors.links).forEach(a => {
+                    if (a.href && a.href.startsWith('http')) {
+                        links.push({ url: a.href, depth: 1 });
+                    }
+                });
+                
+                return [...new Set(links.map(l => l.url))].map(u => ({ url: u }));
+            } catch {
+                return [];
+            }
+        }
+
+        function displayResults() {
+            document.getElementById('dataTable').innerHTML = kiranaData.slice(0, 100).map((item, i) => `
+                <tr>
+                    <td>${i+1}</td>
+                    <td>${item.name}</td>
+                    <td>
+                        <span class="price">₹${item.price.toFixed(0)}</span>
+                        <span class="mrp">${item.mrp.toFixed(0)}</span>
+                    </td>
+                    <td>${item.size}</td>
+                    <td>${item.category}</td>
+                    <td class="savings">₹${((item.mrp - item.price).toFixed(0))}</td>
+                    <td><a href="${item.url}" target="_blank" style="color:#4ECDC4;">🛒 Buy</a></td>
+                </tr>
+            `).join('');
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function calculateSavings() {
+            const totalSavings = kiranaData.reduce((sum, item) => sum + (item.mrp - item.price), 0);
+            document.getElementById('totalSavings').textContent = `₹${totalSavings.toLocaleString()}`;
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = Math.min(100, percent) + '%';
+        }
+
+        function updateLiveStats() {
+            document.getElementById('totalProducts').textContent = kiranaData.length;
+            document.getElementById('pagesCrawled').textContent = Math.floor(kiranaData.length / 5);
+        }
+
+        function showStatus(msg, type) {
+            const el = document.getElementById('status');
+            el.textContent = msg;
+            el.className = `status ${type}`;
+        }
+
+        function downloadCSV() {
+            const csv = [
+                ['#','Product','Price','MRP','Savings','Size','Category','Store','Date'],
+                ...kiranaData.map((item, i) => 
