@@ -3,223 +3,617 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiTrack - World Class Logistics Platform</title>
+    <title>LogiTrack - Smart Logistics Platform</title>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-light: rgba(102, 126, 234, 0.1);
+            --success: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            --danger: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            --warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --shadow: 0 20px 40px rgba(0,0,0,0.1);
+            --shadow-lg: 0 30px 60px rgba(0,0,0,0.15);
         }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        
-        /* Header */
-        .header { 
-            background: rgba(255,255,255,0.95); 
-            backdrop-filter: blur(20px);
-            border-radius: 20px; 
-            padding: 20px; 
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-        }
-        .logo { font-size: 28px; font-weight: 700; color: #667eea; }
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .role-badge { 
-            padding: 8px 16px; 
-            border-radius: 25px; 
-            font-weight: 600; 
-            font-size: 12px;
-            color: white;
-        }
-        .manufacturer { background: #28a745; }
-        .transporter { background: #007bff; }
-        .shopkeeper { background: #ffc107; color: #000; }
-        .admin { background: #dc3545; }
 
-        /* Dashboard Grid */
-        .dashboard { display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
-        .main-content { background: rgba(255,255,255,0.95); border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .sidebar { background: rgba(255,255,255,0.95); border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); height: fit-content; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo i {
+            font-size: 36px;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+            padding: 30px 20px;
+            min-height: calc(100vh - 80px);
+        }
 
         /* Cards */
-        .card { 
-            background: white; 
-            border-radius: 15px; 
-            padding: 25px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-left: 5px solid #667eea;
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .card h3 { color: #333; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-top: 20px; }
-        .stat-item { text-align: center; padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 15px; }
-        .stat-number { font-size: 32px; font-weight: 700; color: #667eea; }
-        .stat-label { color: #666; font-size: 14px; margin-top: 5px; }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 25px 20px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102,126,234,0.2);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
 
         /* Map */
-        #map { height: 400px; border-radius: 15px; margin-bottom: 20px; }
-        .location-info { display: flex; gap: 15px; align-items: center; padding: 15px; background: #f8f9ff; border-radius: 10px; }
-        .location-info i { color: #667eea; font-size: 20px; }
+        #map {
+            height: 400px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .location-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(102,126,234,0.2);
+        }
+
+        .location-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
 
         /* Orders Table */
-        .orders-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .orders-table th, .orders-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        .orders-table th { background: #f8f9ff; font-weight: 600; color: #333; }
-        .status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .status.pending { background: #fff3cd; color: #856404; }
-        .status.accepted { background: #d1ecf1; color: #0c5460; }
-        .status.in-transit { background: #d4edda; color: #155724; }
-        .status.delivered { background: #c3e6cb; color: #155724; }
+        .orders-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            margin-top: 20px;
+        }
+
+        .orders-table tr {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .orders-table tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .orders-table th {
+            padding: 20px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .orders-table td {
+            padding: 24px;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; }
+        .status-accepted { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #1e40af; }
+        .status-picked-up { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #166534; }
+        .status.in-transit { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; }
+        .status-delivered { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #166534; }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(86,171,47,0.4);
+        }
+
+        /* Sidebar Contacts */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 16px;
+            background: #f8f9ff;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .contact-item:hover {
+            background: var(--primary-light);
+            transform: translateX(5px);
+        }
+
+        .contact-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .contact-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .contact-info p {
+            color: #64748b;
+            font-size: 14px;
+        }
 
         /* Forms */
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
-        .form-group input, .form-group select, .form-group textarea { 
-            width: 100%; padding: 15px; border: 2px solid #e9ecef; border-radius: 10px; 
-            font-size: 16px; transition: all 0.3s ease;
+        .form-group {
+            margin-bottom: 25px;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
         }
-        .btn { 
-            padding: 15px 30px; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 16px; 
-            font-weight: 600; 
-            cursor: pointer; 
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
             transition: all 0.3s ease;
-            display: inline-flex; align-items: center; gap: 10px;
+            background: white;
         }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4); }
-        .btn-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; }
-        .btn-danger { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; }
 
-        /* Navigation */
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 30px; }
-        .nav-tab { 
-            padding: 15px 25px; 
-            border: none; 
-            background: #f8f9ff; 
-            border-radius: 10px 10px 0 0; 
-            cursor: pointer; 
-            font-weight: 500; 
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        /* Navigation Pills */
+        .nav-pills {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding: 5px;
+            background: #f1f3f4;
+            border-radius: 50px;
+            flex-wrap: wrap;
+        }
+
+        .nav-pill {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 14px;
         }
-        .nav-tab.active { background: white; border-bottom: 3px solid #667eea; color: #667eea; }
 
-        /* Live Tracking */
-        .live-tracking { position: relative; }
-        .tracking-dot { 
-            position: absolute; 
-            width: 20px; 
-            height: 20px; 
-            background: #ff4757; 
-            border-radius: 50%; 
-            border: 4px solid white; 
-            box-shadow: 0 0 20px rgba(255, 71, 87, 0.6);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0.7; } }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; }
-            .header { flex-direction: column; gap: 15px; text-align: center; }
-            .orders-table { font-size: 14px; }
-            .orders-table th, .orders-table td { padding: 10px 5px; }
+        .nav-pill.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow);
         }
 
         /* Modal */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.5); 
-            z-index: 1000; 
-            backdrop-filter: blur(5px);
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
         }
-        .modal.active { display: flex; align-items: center; justify-content: center; }
-        .modal-content { 
-            background: white; 
-            padding: 40px; 
-            border-radius: 20px; 
-            max-width: 500px; 
-            width: 90%; 
-            max-height: 90vh; 
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.8);
+            animation: modalSlideIn 0.3s ease forwards;
+        }
+
+        @keyframes modalSlideIn {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                padding: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .orders-table {
+                font-size: 14px;
+            }
+
+            .orders-table td,
+            .orders-table th {
+                padding: 15px 12px;
+            }
+        }
+
+        /* Live Tracking Animation */
+        .live-marker {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102,126,234,0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(102,126,234,0); }
+            100% { box-shadow: 0 0 0 0 rgba(102,126,234,0); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo">
-                <i class="fas fa-truck"></i> LogiTrack
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal-overlay active">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-sign-in-alt" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
+                <h2 class="modal-title">Welcome to LogiTrack</h2>
+                <p style="color: #64748b; font-size: 16px;">Sign in to your account</p>
             </div>
-            <div class="user-info">
-                <div id="userRole" class="role-badge"></div>
-                <span id="userName"></span>
-                <button class="btn btn-danger" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="loginPhone" class="form-control" placeholder="+91 9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 18px;">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
+            </form>
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #64748b; margin-bottom: 25px;">Don't have an account?</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                    <button type="button" class="btn btn-primary" onclick="showRegister('manufacturer')" style="flex: 1; min-width: 140px;">
+                        <i class="fas fa-industry"></i> Manufacturer
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="showRegister('transporter')" style="flex: 1; min-width: 140px;">
+                        <i class="fas fa-truck"></i> Transporter
+                    </button>
+                    <button type="button" class="btn" onclick="showRegister('shopkeeper')" style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #f6ad55 0%, #fd8e3e 100%); color: white;">
+                        <i class="fas fa-store"></i> Shopkeeper
+                    </button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="dashboard">
+    <!-- Main App (Hidden initially) -->
+    <header class="header" id="mainHeader" style="display: none;">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-truck-loading"></i>
+                LogiTrack
+            </div>
+            <div class="header-actions">
+                <div class="user-avatar" id="userAvatar" onclick="showProfile()">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container" id="mainContainer" style="display: none;">
+        <div class="main-layout">
             <!-- Main Content -->
-            <div class="main-content">
-                <!-- Navigation Tabs -->
-                <div class="nav-tabs">
-                    <button class="nav-tab active" onclick="showTab('dashboard')">Dashboard</button>
-                    <button class="nav-tab" onclick="showTab('orders')">Orders</button>
-                    <button class="nav-tab" id="productsTab" style="display:none" onclick="showTab('products')">Products</button>
-                    <button class="nav-tab" id="createOrderTab" style="display:none" onclick="showTab('createOrder')">Create Order</button>
+            <div class="content-main">
+                <div class="nav-pills" id="navPills">
+                    <button class="nav-pill active" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </button>
+                    <button class="nav-pill" data-tab="orders">
+                        <i class="fas fa-list"></i> Orders
+                    </button>
+                    <button class="nav-pill" data-tab="products" id="productsNav" style="display: none;">
+                        <i class="fas fa-boxes"></i> Products
+                    </button>
+                    <button class="nav-pill" data-tab="new-order" id="newOrderNav" style="display: none;">
+                        <i class="fas fa-plus-circle"></i> New Order
+                    </button>
                 </div>
 
                 <!-- Dashboard Tab -->
                 <div id="dashboardTab" class="tab-content active">
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-number" id="totalOrders">0</div>
-                            <div class="stat-label">Total Orders</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" id="pendingOrders">0</div>
-                            <div class="stat-label">Pending</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" id="inTransitOrders">0</div>
-                            <div class="stat-label">In Transit</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" id="deliveredOrders">0</div>
-                            <div class="stat-label">Delivered</div>
-                        </div>
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- Stats will be populated here -->
                     </div>
-
-                    <!-- Live Map -->
+                    
                     <div class="card">
-                        <h3><i class="fas fa-map-marked-alt"></i> Live Tracking</h3>
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                            <h3 class="card-title">Live Tracking</h3>
+                        </div>
                         <div id="map"></div>
-                        <div class="location-info">
-                            <i class="fas fa-map-pin"></i>
-                            <span id="currentLocation">Loading location...</span>
+                        <div class="location-display" id="locationDisplay">
+                            <div class="location-icon">
+                                <i class="fas fa-map-pin"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px;" id="locationText">Getting your location...</div>
+                                <div style="font-size: 14px; color: #64748b;" id="coordinatesText"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -227,50 +621,65 @@
                 <!-- Orders Tab -->
                 <div id="ordersTab" class="tab-content">
                     <div class="card">
-                        <h3><i class="fas fa-list"></i> Orders</h3>
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            <h3 class="card-title">Recent Orders</h3>
+                        </div>
                         <table class="orders-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Order ID</th>
                                     <th>Customer</th>
                                     <th>Status</th>
                                     <th>Total</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="ordersTableBody">
+                            <tbody id="ordersTable">
+                                <!-- Orders populated here -->
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <!-- Products Tab -->
-                <div id="productsTabContent" class="tab-content">
+                <div id="productsTab" class="tab-content">
                     <div class="card">
-                        <h3><i class="fas fa-box"></i> Products</h3>
-                        <button class="btn btn-primary" onclick="showModal('productModal')">
-                            <i class="fas fa-plus"></i> Add Product
-                        </button>
-                        <div id="productsList" style="margin-top: 20px;"></div>
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <h3 class="card-title">Products</h3>
+                        </div>
+                        <div id="productsList">
+                            <!-- Products will be here -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Create Order Tab -->
-                <div id="createOrderTabContent" class="tab-content">
+                <!-- New Order Tab -->
+                <div id="newOrderTab" class="tab-content">
                     <div class="card">
-                        <h3><i class="fas fa-shopping-cart"></i> Create New Order</h3>
-                        <form id="orderForm">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <h3 class="card-title">Create New Order</h3>
+                        </div>
+                        <form id="newOrderForm">
                             <div class="form-group">
-                                <label>Products</label>
-                                <select id="productSelect" class="form-group" multiple>
-                                    <!-- Products will be loaded here -->
+                                <label class="form-label">Select Products</label>
+                                <select id="productSelect" class="form-control" multiple style="height: 120px;">
+                                    <!-- Products loaded here -->
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Quantity</label>
-                                <input type="number" id="quantity" min="1" value="1">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" id="orderQuantity" class="form-control" min="1" value="1">
                             </div>
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
                                 <i class="fas fa-paper-plane"></i> Place Order
                             </button>
                         </form>
@@ -281,121 +690,108 @@
             <!-- Sidebar -->
             <div class="sidebar">
                 <div class="card">
-                    <h3><i class="fas fa-phone"></i> Quick Contacts</h3>
-                    <div id="contactsList"></div>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="card-title">Quick Contacts</h3>
+                    </div>
+                    <div id="contactsList">
+                        <!-- Contacts populated here -->
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>Phone</label>
-                    <input type="tel" id="loginPhone" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-            </form>
-            <div style="margin-top: 20px;">
-                <button class="btn btn-primary" onclick="showRegisterModal()" style="width: 48%; margin-right: 4%;">
-                    Register as Manufacturer
-                </button>
-                <button class="btn btn-success" onclick="showRegisterModal('transporter')" style="width: 48%;">
-                    Register as Transporter
-                </button>
-                <br><br>
-                <button class="btn btn-warning" onclick="showRegisterModal('shopkeeper')" style="width: 48%; margin-right: 4%;">
-                    Register as Shopkeeper
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-plus"></i> Add Product</h2>
-            <form id="productForm">
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" id="productName" required>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="productDescription" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Price (₹)</label>
-                    <input type="number" id="productPrice" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>Stock</label>
-                    <input type="number" id="productStock" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    Add Product
-                </button>
-            </form>
         </div>
     </div>
 
     <script>
-        // Global variables
-        let token = localStorage.getItem('token');
-        let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        let map, userMarker, trackingMarker;
-        let watchId;
+        // Global State
+        let currentUser = null;
+        let token = null;
+        let map = null;
+        let userMarker = null;
+        let watchId = null;
 
-        // Initialize app
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            if (token && currentUser.role) {
+            token = localStorage.getItem('token');
+            currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+            
+            if (token && currentUser) {
                 initApp();
-            } else {
-                showModal('loginModal');
             }
         });
 
         async function initApp() {
-            document.getElementById('userName').textContent = currentUser.name;
-            document.getElementById('userRole').textContent = currentUser.role.toUpperCase();
-            document.getElementById('userRole').className = `role-badge ${currentUser.role}`;
+            document.getElementById('mainHeader').style.display = 'block';
+            document.getElementById('mainContainer').style.display = 'block';
+            document.getElementById('loginModal').classList.remove('active');
             
-            // Show relevant tabs
-            if (currentUser.role === 'admin' || currentUser.role === 'manufacturer') {
-                document.getElementById('productsTab').style.display = 'block';
+            document.getElementById('userAvatar').innerHTML = currentUser.name.charAt(0).toUpperCase();
+            
+            // Show relevant navigation
+            if (['manufacturer', 'admin'].includes(currentUser.role)) {
+                document.getElementById('productsNav').style.display = 'block';
             }
             if (currentUser.role === 'shopkeeper') {
-                document.getElementById('createOrderTab').style.display = 'block';
+                document.getElementById('newOrderNav').style.display = 'block';
             }
-
+            
             initMap();
+            setupNavigation();
             loadDashboard();
             loadOrders();
-            if (currentUser.role === 'shopkeeper') loadProductsForOrder();
-            startLocationTracking();
+            loadContacts();
+            
+            if (currentUser.role === 'shopkeeper') {
+                loadProductsForOrder();
+            }
+            
+            startLiveTracking();
         }
 
         function initMap() {
-            map = L.map('map').setView([28.6139, 77.2090], 10);
+            map = L.map('map', {
+                zoomControl: false
+            }).setView([28.6139, 77.2090], 12);
+            
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
+                attribution: '© OpenStreetMap'
             }).addTo(map);
-
-            // Add user marker
+            
+            // Add zoom controls
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
+            
             if (currentUser.location?.coordinates) {
                 const [lng, lat] = currentUser.location.coordinates;
-                userMarker = L.marker([lat, lng]).addTo(map)
-                    .bindPopup(`<b>${currentUser.name}</b><br>Your Location`);
-                map.setView([lat, lng], 15);
+                userMarker = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: 'live-marker',
+                        html: '<div style="width:20px;height:20px;background:#667eea;border-radius:50%;border:4px solid white;box-shadow:0 0 20px rgba(102,126,234,0.6);"></div>',
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 14]
+                    })
+                }).addTo(map).bindPopup(`<b>${currentUser.name}</b><br>Your Location`);
+                map.setView([lat, lng], 16);
             }
+        }
+
+        function setupNavigation() {
+            document.querySelectorAll('.nav-pill').forEach(pill => {
+                pill.addEventListener('click', (e) => {
+                    const tab = e.target.dataset.tab;
+                    
+                    // Update active pill
+                    document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    // Show tab content
+                    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                    document.getElementById(tab + 'Tab').classList.add('active');
+                });
+            });
         }
 
         async function loadDashboard() {
@@ -403,29 +799,33 @@
                 const res = await fetch('/api/orders', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const orders = await res.json();
+                const { orders } = await res.json();
                 
-                document.getElementById('totalOrders').textContent = orders.length;
-                document.getElementById('pendingOrders').textContent = orders.filter(o => o.status === 'pending').length;
-                document.getElementById('inTransitOrders').textContent = orders.filter(o => o.status === 'in-transit').length;
-                document.getElementById('deliveredOrders').textContent = orders.filter(o => o.status === 'delivered').length;
-
-                // Update map with active orders
-                orders.filter(o => o.status === 'in-transit').forEach(order => {
-                    if (order.currentLocation?.coordinates) {
-                        const [lng, lat] = order.currentLocation.coordinates;
-                        if (trackingMarker) map.removeLayer(trackingMarker);
-                        trackingMarker = L.circleMarker([lat, lng], {
-                            radius: 12,
-                            fillColor: '#ff4757',
-                            color: '#fff',
-                            weight: 3,
-                            opacity: 1,
-                            fillOpacity: 0.8
-                        }).addTo(map)
-                        .bindPopup(`Order #${order._id.slice(-6)}<br>In Transit`);
-                    }
-                });
+                const stats = {
+                    total: orders.length,
+                    pending: orders.filter(o => o.status === 'pending').length,
+                    transit: orders.filter(o => ['picked-up', 'in-transit'].includes(o.status)).length,
+                    delivered: orders.filter(o => o.status === 'delivered').length
+                };
+                
+                document.getElementById('statsGrid').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.total}</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.pending}</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.transit}</div>
+                        <div class="stat-label">In Transit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.delivered}</div>
+                        <div class="stat-label">Delivered</div>
+                    </div>
+                `;
             } catch (error) {
                 console.error('Dashboard load error:', error);
             }
@@ -436,124 +836,138 @@
                 const res = await fetch('/api/orders', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const orders = await res.json();
-                const tbody = document.getElementById('ordersTableBody');
-                tbody.innerHTML = orders.map(order => `
-                    <tr>
-                        <td>${order._id.slice(-6)}</td>
-                        <td>${order.shopkeeper?.name || 'N/A'}<br><small>${order.shopkeeper?.phone}</small></td>
-                        <td><span class="status ${order.status}">${order.status.toUpperCase()}</span></td>
-                        <td>₹${order.totalAmount}</td>
-                        <td>
-                            ${order.status === 'pending' && currentUser.role === 'manufacturer' ? 
-                                `<button class="btn btn-success" onclick="acceptOrder('${order._id}')">Accept</button>` : ''}
-                            ${order.status === 'accepted' && !order.transporter && currentUser.role === 'transporter' ? 
-                                `<button class="btn btn-primary" onclick="pickupOrder('${order._id}')">Pickup</button>` : ''}
-                            ${order.status === 'in-transit' && currentUser.role === 'transporter' ? 
-                                `<button class="btn btn-success" onclick="markDelivered('${order._id}')">Delivered</button>` : ''}
-                        </td>
-                    </tr>
-                `).join('');
+                const { orders } = await res.json();
+                
+                document.getElementById('ordersTable').innerHTML = orders.map(order => {
+                    const actions = getOrderActions(order);
+                    return `
+                        <tr>
+                            <td><strong>#${order.orderId}</strong></td>
+                            <td>
+                                <div style="font-weight: 600;">${order.shopkeeper?.name}</div>
+                                <div style="font-size: 14px; color: #64748b;">${order.shopkeeper?.phone}</div>
+                            </td>
+                            <td><span class="status-badge status-${order.status}">${order.status.replace('-', ' ').toUpperCase()}</span></td>
+                            <td><strong>₹${order.totalAmount.toLocaleString()}</strong></td>
+                            <td>${actions}</td>
+                        </tr>
+                    `;
+                }).join('');
             } catch (error) {
                 console.error('Orders load error:', error);
             }
         }
 
-        async function loadProductsForOrder() {
-            try {
-                const res = await fetch('/api/products', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const products = await res.json();
-                const select = document.getElementById('productSelect');
-                select.innerHTML = products.map(p => 
-                    `<option value="${p._id}">${p.name} - ₹${p.price}</option>`
-                ).join('');
-            } catch (error) {
-                console.error('Products load error:', error);
+        function getOrderActions(order) {
+            if (currentUser.role === 'manufacturer' && order.status === 'pending') {
+                return `<button class="btn btn-success" onclick="acceptOrder('${order._id}')">
+                    <i class="fas fa-check"></i> Accept
+                </button>`;
             }
+            
+            if (currentUser.role === 'transporter' && order.status === 'accepted' && !order.transporter) {
+                return `<button class="btn btn-primary" onclick="pickupOrder('${order._id}')">
+                    <i class="fas fa-truck"></i> Pickup
+                </button>`;
+            }
+            
+            if (currentUser.role === 'transporter' && order.status === 'picked-up') {
+                return `<button class="btn btn-success" onclick="markDelivered('${order._id}')">
+                    <i class="fas fa-check-circle"></i> Delivered
+                </button>`;
+            }
+            
+            return '<span style="color: #64748b;">No action</span>';
         }
 
         // Event Listeners
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        phone: document.getElementById('loginPhone').value,
-                        password: document.getElementById('loginPassword').value
-                    })
-                });
-                const data = await res.json();
-                if (data.token) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    location.reload();
-                } else {
-                    alert(data.error);
-                }
-            } catch (error) {
-                alert('Login failed');
-            }
-        });
-
-        document.getElementById('orderForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const productId = document.getElementById('productSelect').value;
-            const quantity = document.getElementById('quantity').value;
+            const phone = document.getElementById('loginPhone').value;
+            const password = document.getElementById('loginPassword').value;
             
             try {
-                const res = await fetch('/api/products', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const products = await res.json();
-                const product = products.find(p => p._id === productId);
-                
-                const orderRes = await fetch('/api/orders', {
+                const res = await fetch('/api/auth/login', {
                     method: 'POST',
-                    headers: { 
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        products: [{ product: productId, quantity: parseInt(quantity), price: product.price }],
-                        totalAmount: product.price * quantity
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
                 });
                 
-                if (orderRes.ok) {
-                    alert('Order placed successfully!');
-                    loadOrders();
-                    loadDashboard();
-                    e.target.reset();
+                const data = await res.json();
+                if (data.success) {
+                    token = data.token;
+                    currentUser = data.user;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                    initApp();
+                } else {
+                    alert(data.message);
                 }
             } catch (error) {
-                alert('Failed to place order');
+                alert('Login failed. Please try again.');
             }
         });
 
-        // Utility Functions
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            event.target.classList.add('active');
-            document.getElementById(tabName + 'TabContent')?.classList.add('active');
+        async function loadContacts() {
+            // Simulate contacts or fetch from API
+            document.getElementById('contactsList').innerHTML = `
+                <div class="contact-item">
+                    <div class="contact-avatar">M</div>
+                    <div class="contact-info">
+                        <h4>Manufacturer Team</h4>
+                        <p>+91 98765 43210</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-avatar">S</div>
+                    <div class="contact-info">
+                        <h4>Shopkeeper Support</h4>
+                        <p>+91 98765 43211</p>
+                    </div>
+                </div>
+            `;
         }
 
-        function showModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function hideModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function logout() {
-            localStorage.clear();
-            location.reload();
+        function startLiveTracking() {
+            if (!navigator.geolocation) return;
+            
+            navigator.geolocation.watchPosition(async (position) => {
+                const { latitude: lat, longitude: lng } = position.coords;
+                
+                document.getElementById('locationText').textContent = 'Live Location Active';
+                document.getElementById('coordinatesText').textContent = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+                
+                // Update map marker
+                if (userMarker) map.removeLayer(userMarker);
+                userMarker = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: 'live-marker',
+                        html: '<div style="width:20px;height:20px;background:#667eea;border-radius:50%;border:4px solid white;box-shadow:0 0 20px rgba(102,126,234,0.6);"></div>',
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 14]
+                    })
+                }).addTo(map);
+                
+                map.setView([lat, lng], 16);
+                
+                // Update server
+                try {
+                    await fetch('/api/location/update', {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ lng, lat })
+                    });
+                } catch (error) {
+                    console.error('Location update failed');
+                }
+            }, console.error, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 5000
+            });
         }
 
         // Order Actions
@@ -563,10 +977,10 @@
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (res.ok) {
+                const data = await res.json();
+                if (data.success) {
                     loadOrders();
                     loadDashboard();
-                    alert('Order accepted!');
                 }
             } catch (error) {
                 alert('Failed to accept order');
@@ -580,16 +994,18 @@
                 try {
                     const res = await fetch(`/api/orders/${orderId}/pickup`, {
                         method: 'PUT',
-                        headers: { 
+                        headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ location: { lng: position.coords.longitude, lat: position.coords.latitude } })
+                        body: JSON.stringify({
+                            location: { lng: position.coords.longitude, lat: position.coords.latitude }
+                        })
                     });
-                    if (res.ok) {
+                    const data = await res.json();
+                    if (data.success) {
                         loadOrders();
                         loadDashboard();
-                        alert('Order picked up!');
                     }
                 } catch (error) {
                     alert('Failed to pickup order');
@@ -597,55 +1013,21 @@
             });
         }
 
-        async function markDelivered(orderId) {
-            // Implementation for marking delivered
-            alert('Delivered functionality - implement server endpoint');
+        // Modal Controls
+        function showRegister(role) {
+            alert(`Register as ${role} - Implementation coming soon!`);
         }
 
-        // Live Location Tracking
-        function startLocationTracking() {
-            if (!navigator.geolocation) return;
-            
-            watchId = navigator.geolocation.watchPosition(async (position) => {
-                const location = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                
-                document.getElementById('currentLocation').textContent = 
-                    `Lat: ${location.lat.toFixed(6)}, Lng: ${location.lng.toFixed(6)}`;
-                
-                if (userMarker) map.removeLayer(userMarker);
-                userMarker = L.marker([location.lat, location.lng]).addTo(map)
-                    .bindPopup(`<b>${currentUser.name}</b><br>Live Location`);
-                map.setView([location.lat, location.lng], 15);
-                
-                // Update server location
-                try {
-                    await fetch('/api/update-location', {
-                        method: 'PUT',
-                        headers: { 
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ lng: location.lng, lat: location.lat })
-                    });
-                } catch (error) {
-                    console.error('Location update failed:', error);
-                }
-            }, console.error, {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 10000
-            });
+        function showProfile() {
+            alert('Profile - Implementation coming soon!');
         }
 
-        // Close modals when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) hideModal(modal.id);
-            });
+        // Close modals on overlay click
+        document.getElementById('loginModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                // Don't close on login modal initially
+            }
         });
     </script>
 </body>
-</html>
+    </html>
