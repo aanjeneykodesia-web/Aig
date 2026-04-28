@@ -55,7 +55,30 @@ app.get('/api/user', authenticate, (req, res) => {
 
 app.post('/api/login', (req, res) => {
     const { phone, role } = req.body;
-    const user = database.users.find(u => u.phone === phone && u.role === role);
+    
+    console.log('Login attempt:', { phone, role }); // Debug log
+    
+    // Find existing user
+    let user = database.users.find(u => u.phone === phone && u.role === role);
+    
+    if (!user) {
+        // Auto-register new user
+        user = {
+            id: Date.now(),
+            phone: phone,
+            name: phone.replace(/^\+91/, ''), // Clean name from phone
+            role: role,
+            location: { 
+                lat: 20.5937 + (Math.random() - 0.5) * 5, 
+                lng: 78.9629 + (Math.random() - 0.5) * 5 
+            }
+        };
+        database.users.push(user);
+        console.log('New user registered:', user);
+    }
+    
+    res.json(user);
+});
     
     if (user) {
         res.json(user);
