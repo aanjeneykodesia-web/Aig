@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+<style>
+body { font-family: Arial; background:#f5f7fa; }
+.container { max-width:800px; margin:auto; padding:20px;}
+.card { background:#fff; padding:20px; margin-bottom:15px; border-radius:10px;}
+.btn { padding:8px 12px; background:red; color:#fff; border:none; cursor:pointer;}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Admin Panel</h2>
+
+<div id="loginBox">
+    <input type="password" id="pass" placeholder="Enter Password">
+    <button onclick="login()">Login</button>
+</div>
+
+<div id="panel" style="display:none;">
+    <h3>All Manufacturers</h3>
+    <div id="data"></div>
+</div>
+
+</div>
+
+<script>
+const PASSWORD = "admin//@//234";
+
+function login(){
+    let pass = document.getElementById("pass").value;
+    if(pass === PASSWORD){
+        document.getElementById("loginBox").style.display="none";
+        document.getElementById("panel").style.display="block";
+        loadData();
+    } else {
+        alert("Wrong Password");
+    }
+}
+
+function loadData(){
+    let data = JSON.parse(localStorage.getItem("manufacturers")) || [];
+    let html = "";
+    
+    data.forEach((m,i)=>{
+        html += `
+        <div class="card">
+            <b>${m.name}</b><br>
+            ${m.category}<br>
+            ${m.location}<br><br>
+            <button class="btn" onclick="deleteItem(${i})">Delete</button>
+        </div>`;
+    });
+
+    document.getElementById("data").innerHTML = html;
+}
+
+function deleteItem(i){
+    let data = JSON.parse(localStorage.getItem("manufacturers"));
+    data.splice(i,1);
+    localStorage.setItem("manufacturers", JSON.stringify(data));
+    loadData();
+}
+</script>
+
+</body>
+</html>
