@@ -1,245 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manufacturer Directory - Fixed</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" />
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        #tabs { display: flex; gap: 5px; margin-bottom: 20px; }
-        .tab-btn { padding: 12px 24px; background: #f0f0f0; border: none; cursor: pointer; border-radius: 5px 5px 0 0; }
-        .tab-btn.active { background: #007bff; color: white; }
-        .tab-content { display: none; padding: 20px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 5px 5px; }
-        .tab-content.active { display: block; }
-        #map { height: 500px; width: 100%; border-radius: 5px; }
-        form { max-width: 500px; margin: 0 auto 20px; padding: 20px; border: 1px solid #ccc; border-radius: 5px; background: #fafafa; }
-        input, select, button { display: block; width: 100%; margin: 10px 0; padding: 12px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
-        button { background: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background: #0056b3; }
-        #coords { font-size: 14px; color: #666; padding: 10px; background: white; border-radius: 4px; }
-        #adminTools { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        #adminTools input { width: 250px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 5px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background: #f8f9fa; font-weight: bold; }
-        tr:nth-child(even) { background: #f8f9fa; }
-        .action-btn { padding: 6px 12px; margin: 0 2px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; }
-        .edit-btn { background: #28a745; color: white; }
-        .del-btn { background: #dc3545; color: white; }
-        .cluster-custom div { width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; position: relative; display: inline-block; margin: 1px; }
-        .cluster-custom .count { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; font-size: 9px; color: white; text-shadow: 1px 1px 1px black; }
-        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
-        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manufacturer Directory - Final</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
+
+<style>
+body { font-family: Arial; margin:0; padding:20px; }
+#tabs { display:flex; gap:5px; margin-bottom:20px; }
+.tab-btn { padding:10px; border:none; background:#eee; cursor:pointer; }
+.tab-btn.active { background:#007bff; color:#fff; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+#map { height:500px; }
+
+form { max-width:500px; margin:auto; }
+input, select, button {
+width:100%; padding:10px; margin:10px 0;
+}
+
+button { background:#007bff; color:white; border:none; }
+
+table { width:100%; border-collapse:collapse; margin-top:20px; }
+td, th { border:1px solid #ddd; padding:8px; }
+
+.success { color:green; }
+.error { color:red; }
+</style>
 </head>
+
 <body>
-    <h1>🏭 Manufacturer Directory & Admin</h1>
-    <p class="status success">All features working: Register → Map clustering → Admin CRUD</p>
-    
-    <div id="tabs">
-        <button class="tab-btn active" data-tab="register">📝 Register</button>
-        <button class="tab-btn" data-tab="map">🗺️ Map View</button>
-        <button class="tab-btn" data-tab="admin">🔧 Admin Panel</button>
-    </div>
 
-    <div id="register" class="tab-content active">
-        <form id="regForm">
-            <input type="text" id="name" placeholder="Manufacturer Name *" required>
-            <input type="text" id="desc" placeholder="Description *" required>
-            <select id="category">
-                <option value="">Select predefined or enter custom below</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Automotive">Automotive</option>
-                <option value="Textiles">Textiles</option>
-                <option value="Food">Food Processing</option>
-            </select>
-            <input type="text" id="customCat" placeholder="Custom Category">
-            <button type="button" id="getLoc">📍 Detect Location</button>
-            <div id="coords">Click detect to auto-fill coordinates</div>
-            <input type="number" id="latInput" step="any" placeholder="Latitude" required>
-            <input type="number" id="lngInput" step="any" placeholder="Longitude" required>
-            <button type="submit">✅ Register Manufacturer</button>
-        </form>
-    </div>
+<h2>🏭 Manufacturer Directory</h2>
 
-    <div id="map" class="tab-content">
-        <div id="map"></div>
-        <div id="mapStatus" class="status">Switch to register first, then view clusters here</div>
-    </div>
+<div id="tabs">
+<button class="tab-btn active" data-tab="register">Register</button>
+<button class="tab-btn" data-tab="mapTab">Map</button>
+<button class="tab-btn" data-tab="admin">Admin</button>
+</div>
 
-    <div id="admin" class="tab-content">
-        <div id="adminTools">
-            <input type="password" id="adminPass" placeholder="Admin Password">
-            <button id="loginAdmin">Login</button>
-            <span id="adminStatus"></span>
-        </div>
-        <div id="adminContent" style="display:none;">
-            <div id="adminTools2">
-                <input type="text" id="search" placeholder="🔍 Search name/category...">
-                <button id="exportCSV">📥 Export CSV</button>
-                <button id="clearAll" class="del-btn" style="width:auto;">🗑️ Clear All Data</button>
-            </div>
-            <div>Total: <span id="totalCount">0</span> manufacturers</div>
-            <table id="adminTable">
-                <thead>
-                    <tr>
-                        <th>ID</th><th>Name</th><th>Description</th><th>Category</th><th>Lat</th><th>Lng</th><th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+<!-- REGISTER -->
+<div id="register" class="tab-content active">
+<form id="regForm">
+<input type="text" id="name" placeholder="Name" required>
+<input type="text" id="desc" placeholder="Description" required>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
-    <script>
-        // Global state
-        let map = null;
-        let markers = null;
-        let manufacturers = JSON.parse(localStorage.getItem('manufacturers') || '[]');
-        let categoryHue = 0;
-        let adminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+<select id="category">
+<option value="">Select Category</option>
+<option>Electronics</option>
+<option>Food</option>
+<option>Textiles</option>
+</select>
 
-        // DOM elements
-        const tabs = document.querySelectorAll('.tab-btn');
-        const contents = document.querySelectorAll('.tab-content');
+<input type="text" id="customCat" placeholder="Custom Category">
 
-        // Tab switching
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                contents.forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(tab.dataset.tab).classList.add('active');
-                
-                if (tab.dataset.tab === 'map' && !map) {
-                    initMap();
-                    loadMarkers();
-                }
-            });
-        });
+<button type="button" id="getLoc">📍 Detect Location</button>
 
-        // Map initialization
-        function initMap() {
-            map = L.map('map').setView([26.8467, 80.9462], 8);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+<input type="number" id="latInput" placeholder="Latitude" required>
+<input type="number" id="lngInput" placeholder="Longitude" required>
 
-            markers = L.markerClusterGroup({
-                maxClusterRadius: 50,
-                iconCreateFunction: createClusterIcon
-            });
-            map.addLayer(markers);
-        }
+<button type="submit">Register</button>
+</form>
 
-        function createClusterIcon(cluster) {
-            const children = cluster.getAllChildMarkers();
-            const catCounts = {};
-            children.forEach(marker => {
-                const cat = marker.manufacturer.category;
-                catCounts[cat] = (catCounts[cat] || 0) + 1;
-            });
-            const total = children.length;
-            let html = `<div style="background:#007bff;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:bold;color:white;font-size:16px;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);">${total}</div>`;
-            
-            // Add category pies
-            let pieHtml = '<div style="margin-top:5px;display:flex;justify-content:center;gap:2px;">';
-            Object.entries(catCounts).slice(0,3).forEach(([cat, count]) => {
-                const hue = (Object.keys(catCounts).indexOf(cat) * 120) % 360;
-                pieHtml += `<div style="position:relative;display:inline-block;" title="${cat} (${count})">
-                    <div style="width:20px;height:20px;border-radius:50%;background:hsl(${hue},70%,50%);border:2px solid white;"></div>
-                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:bold;color:white;text-shadow:1px 1px 1px black;">${count}</div>
-                </div>`;
-            });
-            pieHtml += '</div>';
-            
-            return L.divIcon({
-                html: html + pieHtml,
-                className: 'custom-cluster',
-                iconSize: L.point(60, 70)
-            });
-        }
+<div id="status"></div>
+</div>
 
-        function getCategoryColor(cat) {
-            const hue = (categoryHue * 30) % 360;
-            categoryHue++;
-            return `hsl(${hue}, 70%, 50%)`;
-        }
+<!-- MAP -->
+<div id="mapTab" class="tab-content">
+<div id="map"></div>
+<div id="mapStatus"></div>
+</div>
 
-        function loadMarkers() {
-            if (!markers) return;
-            markers.clearLayers();
-            manufacturers.forEach((m, id) => {
-                const color = getCategoryColor(m.category);
-                const icon = L.divIcon({
-                    html: `<div style="background:${color};width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>`,
-                    className: 'custom-marker',
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 12]
-                });
-                const marker = L.marker([m.lat, m.lng], { icon });
-                marker.manufacturer = m;
-                marker.bindPopup(`
-                    <b>${m.name}</b><br>
-                    ${m.desc}<br>
-                    <strong>Category:</strong> ${m.category}<br>
-                    <em>Lat: ${m.lat.toFixed(4)}, Lng: ${m.lng.toFixed(4)}</em>
-                `);
-                markers.addLayer(marker);
-            });
-            document.getElementById('mapStatus').textContent = `${manufacturers.length} manufacturers on map`;
-            if (manufacturers.length > 0) map.fitBounds(markers.getBounds().pad(0.1));
-        }
+<!-- ADMIN -->
+<div id="admin" class="tab-content">
 
-        // Register functionality
-        document.getElementById('getLoc').onclick = () => {
-            if (!navigator.geolocation) return alert('Geolocation not supported');
-            navigator.geolocation.getCurrentPosition(pos => {
-                document.getElementById('latInput').value = pos.coords.latitude.toFixed(6);
-                document.getElementById('lngInput').value = pos.coords.longitude.toFixed(6);
-                document.getElementById('lat').textContent = pos.coords.latitude.toFixed(4);
-                document.getElementById('lng').textContent = pos.coords.longitude.toFixed(4);
-                document.getElementById('coords').innerHTML = `<span class="success">✅ Location detected: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}</span>`;
-            }, err => {
-                document.getElementById('coords').innerHTML = `<span class="error">❌ ${err.message}</span>`;
-            }, { enableHighAccuracy: true });
-        };
+<input type="password" id="adminPass" placeholder="Password">
+<button id="loginAdmin">Login</button>
+<div id="adminStatus"></div>
 
-        document.getElementById('regForm').onsubmit = e => {
-            e.preventDefault();
-            const customCat = document.getElementById('customCat').value.trim();
-            const category = customCat || document.getElementById('category').value;
-            if (!category) return alert('Category required');
-            
-            const manufacturer = {
-                name: document.getElementById('name').value.trim(),
-                desc: document.getElementById('desc').value.trim(),
-                category,
-                lat: parseFloat(document.getElementById('latInput').value),
-                lng: parseFloat(document.getElementById('lngInput').value)
-            };
-            
-            if (isNaN(manufacturer.lat) || isNaN(manufacturer.lng)) return alert('Valid coordinates required');
-            
-            manufacturers.push(manufacturer);
-            localStorage.setItem('manufacturers', JSON.stringify(manufacturers));
-            e.target.reset();
-            document.getElementById('coords').textContent = 'Click detect to auto-fill coordinates';
-            document.getElementById('status').innerHTML = '<span class="success">✅ Registered successfully!</span>';
-            loadMarkers();
-            setTimeout(() => document.getElementById('status').innerHTML = '', 3000);
-        };
+<div id="adminContent" style="display:none;">
 
-        // Admin functionality
-        if (adminLoggedIn) {
-            document.getElementById('adminContent').style.display = 'block';
-            updateAdminTable();
-        }
+<div>Total: <span id="totalCount"></span></div>
 
-        document.getElementById('loginAdmin').onclick = ()
+<table id="adminTable">
+<thead>
+<tr>
+<th>ID</th><th>Name</th><th>Category</th><th>Actions</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+
+<script>
+
+let manufacturers = JSON.parse(localStorage.getItem('manufacturers') || '[]');
+let map, markers;
+let adminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+
+/* Tabs */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+btn.onclick = ()=>{
+document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+
+btn.classList.add('active');
+document.getElementById(btn.dataset.tab).classList.add('active');
+
+if(btn.dataset.tab === 'mapTab' && !map){
+initMap();
+loadMarkers();
+}
+}
+});
+
+/* Map */
+function initMap(){
+map = L.map('map').setView([26.8467,80.9462],6);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+markers = L.markerClusterGroup();
+map.addLayer(markers);
+}
+
+function loadMarkers(){
+markers.clearLayers();
+
+manufacturers.forEach(m=>{
+let marker = L.marker([m.lat,m.lng]);
+marker.bindPopup(`<b>${m.name}</b><br>${m.category}`);
+markers.addLayer(marker);
+});
+
+document.getElementById('mapStatus').textContent =
+manufacturers.length + " manufacturers";
+
+if(manufacturers.length>0){
+map.fitBounds(markers.getBounds());
+}
+}
+
+/* Location */
+document.getElementById('getLoc').onclick = ()=>{
+navigator.geolocation.getCurrentPosition(pos=>{
+latInput.value = pos.coords.latitude;
+lngInput.value = pos.coords.longitude;
+});
+};
+
+/* Register */
+regForm.onsubmit = e=>{
+e.preventDefault();
+
+let category = customCat.value || categorySelect();
+
+function categorySelect(){
+return document.getElementById('category').value;
+}
+
+if(!category) return alert("Category required");
+
+let m = {
+name:name.value,
+desc:desc.value,
+category:category,
+lat:parseFloat(latInput.value),
+lng:parseFloat(lngInput.value)
+};
+
+manufacturers.push(m);
+localStorage.setItem('manufacturers', JSON.stringify(manufacturers));
+
+regForm.reset();
+status.innerHTML = "<span class='success'>Saved!</span>";
+
+loadMarkers();
+updateAdminTable();
+};
+
+/* Admin */
+loginAdmin.onclick = ()=>{
+if(adminPass.value === "admin123"){
+adminContent.style.display = "block";
+adminStatus.textContent = "Logged in";
+localStorage.setItem('adminLoggedIn','true');
+updateAdminTable();
+}else{
+adminStatus.textContent = "Wrong password";
+}
+};
+
+if(adminLoggedIn){
+adminContent.style.display = "block";
+updateAdminTable();
+}
+
+function updateAdminTable(){
+let tbody = document.querySelector('#adminTable tbody');
+tbody.innerHTML = "";
+
+manufacturers.forEach((m,i)=>{
+tbody.innerHTML += `
+<tr>
+<td>${i}</td>
+<td>${m.name}</td>
+<td>${m.category}</td>
+<td>
+<button onclick="editItem(${i})">Edit</button>
+<button onclick="deleteItem(${i})">Delete</button>
+</td>
+</tr>`;
+});
+
+totalCount.textContent = manufacturers.length;
+}
+
+function deleteItem(i){
+manufacturers.splice(i,1);
+localStorage.setItem('manufacturers', JSON.stringify(manufacturers));
+updateAdminTable();
+loadMarkers();
+}
+
+function editItem(i){
+let m = manufacturers[i];
+
+name.value = m.name;
+desc.value = m.desc;
+category.value = m.category;
+latInput.value = m.lat;
+lngInput.value = m.lng;
+
+manufacturers.splice(i,1);
+localStorage.setItem('manufacturers', JSON.stringify(manufacturers));
+
+updateAdminTable();
+loadMarkers();
+}
+
+</script>
+
+</body>
+</html>
